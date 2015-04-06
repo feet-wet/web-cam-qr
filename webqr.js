@@ -3,63 +3,93 @@ var QRWebScanner = (function () {
     var appBox = false,
         canvasBox = false,
         videoBox = false,
+        resultBox = false,
         settings = {
             width: false,
             height: false
         },
 
+    setVideoBox = function(video) {
+        videoBox = video;
+    },
+
+    setCanvasBox = function(canvas) {
+        canvasBox = canvas;
+    },
+
+    setResultBox = function(result) {
+        resultBox = result;
+    },
+
+    getVideoBox = function() {
+        return videoBox;
+    },
+
+    getCanvasBox = function() {
+        return canvasBox;
+    },
+
+    getResultBox = function() {
+        return resultBox;
+    },
+
     init = function(elementID, data){
         if(!elementID) return;
         if(!data) data = false;
 
-        appBox = document.getElementById(elementID);
-
         settings.width = data.width || 320;
         settings.height = data.height || 240;
 
+        initAppBox();
+
         createVideoBox();
         createCanvasBox();
+        createResultBox();
+    },
+
+    initAppBox = function (){
+        appBox = document.getElementById(elementID);
+        appBox.style.width = settings.width;
+        appBox.style.margin = '0, auto';
     },
 
     createVideoBox = function () {
-        //createElement('video', function(){
-        //    videoBox.autoplay = 'autoplay';
-        //});
+        createElement('video', function(video){
+            setVideoBox(video);
+            var content = getVideoBox();
+            content.autoplay = 'autoplay';
 
-        videoBox = document.createElement('video');
-        videoBox.width = settings.width;
-        videoBox.height = settings.height;
-        videoBox.autoplay = 'autoplay';
-
-        appBox.appendChild(videoBox);
-
-        initVideoStream();
+            initVideoStream();
+        });
     },
 
     createCanvasBox = function () {
-        canvasBox = document.createElement('canvas');
-        canvasBox.width = settings.width;
-        canvasBox.height = settings.height;
+        createElement('canvas', function(canvas){
+            setCanvasBox(canvas);
+            var content = getCanvasBox();
+            content.style.display = 'none';
+            content.id = 'qrCanvas';
+        });
+    },
 
-        appBox.appendChild(canvasBox);
-
-        canvasBox.style.display = 'none';
-        canvasBox.id = 'qrCanvas';
-
-        //createElement('canvas', function(){
-        //    canvasBox.style.display = 'none';
-        //    canvasBox.id = 'qrCanvas';
-        //});
+    createResultBox = function () {
+        createElement('div', function(result){
+            setResultBox(result);
+            var content = getResultBox();
+            content.id = 'qrResult';
+            content.style.width = settings.width;
+            content.style.height = settings.height;
+        });
     },
 
     createElement = function(element, callback) {
-        QRWebScanner[element+'Box'] = document.createElement(element);
-        QRWebScanner[element+'Box'].width = settings.width;
-        QRWebScanner[element+'Box'].height = settings.height;
+        var container = document.createElement(element);
+        container.width = settings.width;
+        container.height = settings.height;
 
-        appBox.appendChild(QRWebScanner[element+'Box']);
+        appBox.appendChild(container);
 
-        if(callback) callback();
+        if(callback !== undefined) callback(container);
     },
 
     initVideoStream = function(){
@@ -68,7 +98,7 @@ var QRWebScanner = (function () {
 
         navigator.getUserMedia({video: true},
             function (stream) {
-                 videoBox.src = window.URL.createObjectURL(stream);
+                 getVideoBox().src = window.URL.createObjectURL(stream);
                  setTimeout(captureToCanvasBox, 500);
         }, function () {
                 console.log('что-то не так с видеостримом или пользователь запретил его использовать :P');
@@ -78,9 +108,9 @@ var QRWebScanner = (function () {
 
     captureToCanvasBox = function(){
         try {
-            canvasBox.getContext("2d").drawImage(videoBox,0,0);
+            getCanvasBox().getContext("2d").drawImage(videoBox,0,0);
 
-            decodeCapture(canvasBox.toDataURL('image/jpg'));
+            decodeCapture(getCanvasBox().toDataURL('image/jpg'));
         }
         catch(e) {
             console.log(e);
@@ -91,9 +121,12 @@ var QRWebScanner = (function () {
     decodeCapture = function(capture){
         try {
             QRWebScannerEngine.qrcode.decode(capture);
-            console.log(QRWebScannerEngine.qrcode.currentStatus);
-            QRWebScannerEngine.qrcode.result;
-            setTimeout(captureToCanvasBox, 500);
+            if(QRWebScannerEngine.qrcode.currentStatus){
+                console.log(QRWebScannerEngine.qrcode.currentStatus);
+            } else {
+                setTimeout(captureToCanvasBox, 500);
+            }
+            //QRWebScannerEngine.qrcode.result;
         }
         catch(e) {
             console.log(e);
