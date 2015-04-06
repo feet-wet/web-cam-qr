@@ -98,6 +98,7 @@ var QRWebScanner = (function () {
         navigator.getUserMedia({video: true},
             function (stream) {
                  getVideoBox().src = window.URL.createObjectURL(stream);
+                 addProgressBar();
                  setTimeout(captureToCanvasBox, 500);
         }, function () {
                 console.log('with the video stream that something is wrong or the user banned :P');
@@ -121,16 +122,39 @@ var QRWebScanner = (function () {
         try {
             QRWebScannerEngine.qrcode.decode(capture);
             if(QRWebScannerEngine.qrcode.currentStatus){
-                console.log(QRWebScannerEngine.qrcode.currentStatus);
+                insertToResultBox(QRWebScannerEngine.qrcode.result);
             } else {
                 setTimeout(captureToCanvasBox, 500);
             }
-            //QRWebScannerEngine.qrcode.result;
         }
         catch(e) {
             console.log(e);
             setTimeout(captureToCanvasBox, 500);
         }
+    },
+
+    insertToResultBox = function (data) {
+        if(typeof data == 'string') {
+            getResultBox().innerHTML = readResult(data);
+        } else {
+            getResultBox().appendChild(data);
+        }
+    },
+
+    readResult = function (data) {
+        if(data.indexOf("http://") === 0 || data.indexOf("https://") === 0) {
+            return '<a target="_blank" href="' + data + '">' + data + '</a>';
+        }
+
+        return data;
+    },
+
+    addProgressBar = function () {
+        var img = document.createElement('img');
+        img.src = 'progressbar.gif';
+        img.alt = '- scanning -';
+
+        insertToResultBox(img);
     };
 
     return {
