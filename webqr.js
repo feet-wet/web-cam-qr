@@ -46,15 +46,26 @@ var QRWebScanner = (function () {
         createVideoBox();
         createCanvasBox();
         createResultBox();
+        createProgressBar();
+
+        //Add callback functionality
+    },
+
+    createElement = function(element, callback) {
+        var wrapper = document.createElement(element);
+        wrapper.width = settings.width;
+        wrapper.height = settings.height;
+
+        if(callback !== undefined) callback(wrapper);
     },
 
     createAppBox = function (container){
-        appBox = document.createElement('div');
-        appBox.id = 'qrApp';
-        appBox.style.width = settings.width;
-        appBox.style.height = settings.height;
+        createElement('div', function(appB){
+            setAppBox(appB);
+            getAppBox().id = 'qrApp';
 
-        document.querySelector(container).appendChild(appBox);
+            document.querySelector(container).appendChild(getAppBox());
+        });
     },
 
     createVideoBox = function () {
@@ -63,6 +74,7 @@ var QRWebScanner = (function () {
             getVideoBox().id = 'qrVideo';
             getVideoBox().autoplay = 'autoplay';
 
+            appBox.appendChild(video);
             initVideoStream();
         });
     },
@@ -73,6 +85,8 @@ var QRWebScanner = (function () {
             getCanvasBox().id = 'qrCanvas';
             canvas.width = '640';
             canvas.height = '480';
+
+            appBox.appendChild(canvas);
         });
     },
 
@@ -80,18 +94,22 @@ var QRWebScanner = (function () {
         createElement('div', function(result){
             setResultBox(result);
             getResultBox().id = 'qrResult';
+
+            appBox.appendChild(result);
         });
     },
 
-    createElement = function(element, callback) {
-        var wrapper = document.createElement(element);
-        wrapper.width = settings.width;
-        wrapper.height = settings.height;
-
-        appBox.appendChild(wrapper);
-
-        if(callback !== undefined) callback(wrapper);
-    },
+    createProgressBar = function () {
+        createElement('img', function(imgProgressBar){
+            setImgProgressBar(imgProgressBar);
+            getImgProgressBar().removeAttribute = 'width';
+            getImgProgressBar().removeAttribute = 'height';
+            getImgProgressBar().style.width = 'auto';
+            getImgProgressBar().style.height = 'auto';
+            getImgProgressBar().src = imgProgressBarSRC;
+            getImgProgressBar().alt = '- scanning -';
+        });
+    };
 
     initVideoStream = function(){
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -100,7 +118,6 @@ var QRWebScanner = (function () {
         navigator.getUserMedia({video: true},
             function (stream) {
                  getVideoBox().src = window.URL.createObjectURL(stream);
-                 addProgressBar();
                  setTimeout(captureToCanvasBox, 500);
         }, function () {
                 console.log('with the video stream that something is wrong or the user banned :P');
