@@ -1,3 +1,5 @@
+"use strict";
+
 var QRWebScanner = (function () {
 
     var appBox = false,
