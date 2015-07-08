@@ -28,6 +28,14 @@ var QRWebScanner = (function () {
         resultBox = result;
     },
 
+    setImgProgressBar = function(img) {
+        imgProgressBar = img;
+    },
+
+    getAppBox = function() {
+        return appBox;
+    },
+
     getVideoBox = function() {
         return videoBox;
     },
@@ -38,6 +46,10 @@ var QRWebScanner = (function () {
 
     getResultBox = function() {
         return resultBox;
+    },
+
+    getImgProgressBar = function() {
+        return imgProgressBar;
     },
 
     init = function(container, data){
@@ -143,6 +155,8 @@ var QRWebScanner = (function () {
     },
 
     decodeCapture = function(capture){
+        (getImgProgressBar()) ? insertToResultBox(getImgProgressBar()) : '';
+
         try {
             QRWebScannerEngine.qrcode.decode(capture);
             if(QRWebScannerEngine.qrcode.currentStatus){
@@ -158,6 +172,8 @@ var QRWebScanner = (function () {
     },
 
     insertToResultBox = function (data) {
+        getResultBox().innerHTML = '';
+
         if(typeof data == 'string') {
             getResultBox().innerHTML = checkForLink(data);
         } else {
@@ -171,14 +187,6 @@ var QRWebScanner = (function () {
         }
 
         return data;
-    },
-
-    addProgressBar = function () {
-        var img = document.createElement('img');
-        img.src = progressBarSRC;
-        img.alt = '- scanning -';
-
-        insertToResultBox(img);
     };
 
     return {
