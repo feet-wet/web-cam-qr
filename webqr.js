@@ -128,7 +128,7 @@ var QRWebScanner = (function () {
             getImgProgressBar().src = imgProgressBarSRC;
             getImgProgressBar().alt = '- scanning -';
         });
-    };
+    },
 
     initVideoStream = function(){
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -146,7 +146,7 @@ var QRWebScanner = (function () {
 
     captureToCanvasBox = function(){
         try {
-            getCanvasBox().getContext("2d").drawImage(videoBox,0,0);
+            getCanvasBox().getContext("2d").drawImage(getVideoBox(),0,0);
 
             decodeCapture(getCanvasBox().toDataURL('image/jpg'));
         }
