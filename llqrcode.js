@@ -1550,10 +1550,10 @@ var QRWebScannerEngine = (function(){
             return (a >> b) + (2 << ~b)
         }
     }
-    Array.prototype.remove = function(c, b) {
-        var a = this.slice((b || c) + 1 || this.length);
-        this.length = c < 0 ? this.length + c : c;
-        return this.push.apply(this, a)
+    removeFromArray = function(array, c, b) {
+        var a = array.slice((b || c) + 1 || array.length);
+        array.length = c < 0 ? array.length + c : c;
+        return array.push.apply(array, a)
     };
     var _gf = 3;
     var _eh = 57;
@@ -1847,7 +1847,7 @@ var QRWebScannerEngine = (function(){
                 for (var d = 0; d < this._cv.length && this._cv.length > 3; d++) {
                     var f = this._cv[d];
                     if (Math.abs(f._ei - a) > c) {
-                        this._cv.remove(d);
+                        removeFromArray(this._cv, d);
                         d--
                     }
                 }
@@ -3943,10 +3943,10 @@ var QRWebScannerEngine = (function(){
             return (a >> b) + (2 << ~b)
         }
     }
-    Array.prototype.remove = function(c, b) {
-        var a = this.slice((b || c) + 1 || this.length);
-        this.length = c < 0 ? this.length + c : c;
-        return this.push.apply(this, a)
+    removeFromArray = function(array, c, b) {
+        var a = array.slice((b || c) + 1 || array.length);
+        array.length = c < 0 ? array.length + c : c;
+        return array.push.apply(array, a)
     };
     var _gf = 3;
     var _eh = 57;
@@ -4240,7 +4240,7 @@ var QRWebScannerEngine = (function(){
                 for (var d = 0; d < this._cv.length && this._cv.length > 3; d++) {
                     var f = this._cv[d];
                     if (Math.abs(f._ei - a) > c) {
-                        this._cv.remove(d);
+                        removeFromArray(this._cv, d);
                         d--
                     }
                 }
