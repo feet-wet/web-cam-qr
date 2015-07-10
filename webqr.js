@@ -61,6 +61,70 @@ var QRWebScanner = (function () {
 
     },
 
+    Create = {
+
+        element: function(element, callback) {
+            var wrapper = document.createElement(element);
+            wrapper.width = settings.width;
+            wrapper.height = settings.height;
+
+            if(callback !== undefined) callback(wrapper);
+        },
+
+        appBox: function (container){
+            Create.element('div', function(appB){
+                Set.appBox(appB);
+                Get.appBox().id = 'qrApp';
+
+                document.querySelector(container).appendChild(Get.appBox());
+            });
+        },
+
+        videoBox: function () {
+            Create.element('video', function(video){
+                Set.videoBox(video);
+                Get.videoBox().id = 'qrVideo';
+                Get.videoBox().autoplay = 'autoplay';
+
+                appBox.appendChild(video);
+                initVideoStream();
+            });
+        },
+
+        canvasBox: function () {
+            Create.element('canvas', function(canvas){
+                Set.canvasBox(canvas);
+                Get.canvasBox().id = 'qrCanvas';
+                canvas.width = '640';
+                canvas.height = '480';
+
+                appBox.appendChild(canvas);
+            });
+        },
+
+        resultBox: function () {
+            Create.element('div', function(result){
+                Set.resultBox(result);
+                Get.resultBox().id = 'qrResult';
+
+                appBox.appendChild(result);
+            });
+        },
+
+        progressBar: function () {
+            Create.element('img', function(imgProgressBar){
+                Set.imgProgressBar(imgProgressBar);
+                Get.imgProgressBar().removeAttribute = 'width';
+                Get.imgProgressBar().removeAttribute = 'height';
+                Get.imgProgressBar().style.width = 'auto';
+                Get.imgProgressBar().style.height = 'auto';
+                Get.imgProgressBar().src = imgProgressBarSRC;
+                Get.imgProgressBar().alt = '- scanning -';
+            });
+        }
+
+    },
+
     init = function(container, data){
         if(!container) return;
         if(!data) data = false;
@@ -68,73 +132,13 @@ var QRWebScanner = (function () {
         settings.width = data.width || 320;
         settings.height = data.height || 240;
 
-        createAppBox(container);
-        createVideoBox();
-        createCanvasBox();
-        createResultBox();
-        createProgressBar();
+        Create.appBox(container);
+        Create.videoBox();
+        Create.canvasBox();
+        Create.resultBox();
+        Create.progressBar();
 
         //Add callback functionality
-    },
-
-    createElement = function(element, callback) {
-        var wrapper = document.createElement(element);
-        wrapper.width = settings.width;
-        wrapper.height = settings.height;
-
-        if(callback !== undefined) callback(wrapper);
-    },
-
-    createAppBox = function (container){
-        createElement('div', function(appB){
-            Set.appBox(appB);
-            Get.appBox().id = 'qrApp';
-
-            document.querySelector(container).appendChild(Get.appBox());
-        });
-    },
-
-    createVideoBox = function () {
-        createElement('video', function(video){
-            Set.videoBox(video);
-            Get.videoBox().id = 'qrVideo';
-            Get.videoBox().autoplay = 'autoplay';
-
-            appBox.appendChild(video);
-            initVideoStream();
-        });
-    },
-
-    createCanvasBox = function () {
-        createElement('canvas', function(canvas){
-            Set.canvasBox(canvas);
-            Get.canvasBox().id = 'qrCanvas';
-            canvas.width = '640';
-            canvas.height = '480';
-
-            appBox.appendChild(canvas);
-        });
-    },
-
-    createResultBox = function () {
-        createElement('div', function(result){
-            Set.resultBox(result);
-            Get.resultBox().id = 'qrResult';
-
-            appBox.appendChild(result);
-        });
-    },
-
-    createProgressBar = function () {
-        createElement('img', function(imgProgressBar){
-            Set.imgProgressBar(imgProgressBar);
-            Get.imgProgressBar().removeAttribute = 'width';
-            Get.imgProgressBar().removeAttribute = 'height';
-            Get.imgProgressBar().style.width = 'auto';
-            Get.imgProgressBar().style.height = 'auto';
-            Get.imgProgressBar().src = imgProgressBarSRC;
-            Get.imgProgressBar().alt = '- scanning -';
-        });
     },
 
     initVideoStream = function(){
@@ -154,7 +158,6 @@ var QRWebScanner = (function () {
     captureToCanvasBox = function(){
         try {
             Get.canvasBox().getContext("2d").drawImage(Get.videoBox(),0,0);
-
             decodeCapture(Get.canvasBox().toDataURL('image/jpg'));
         }
         catch(e) {
@@ -168,11 +171,8 @@ var QRWebScanner = (function () {
 
         try {
             QRWebScannerEngine.qrcode.decode(capture);
-            if(QRWebScannerEngine.qrcode.currentStatus){
-                insertToResultBox(QRWebScannerEngine.qrcode.result);
-            } else {
-                setTimeout(captureToCanvasBox, 500);
-            }
+            (QRWebScannerEngine.qrcode.currentStatus) ?
+                insertToResultBox(QRWebScannerEngine.qrcode.result) : setTimeout(captureToCanvasBox, 500);
         }
         catch(e) {
             console.log(e);
@@ -183,15 +183,12 @@ var QRWebScanner = (function () {
     insertToResultBox = function (data) {
         Get.resultBox().innerHTML = '';
 
-        if(typeof data == 'string') {
-            Get.resultBox().innerHTML = checkForLink(data);
-        } else {
-            Get.resultBox().appendChild(data);
-        }
+        (typeof data == 'string') ?
+            Get.resultBox().innerHTML = checkForLink(data) : Get.resultBox().appendChild(data);
     },
 
     checkForLink = function (data) {
-        if(data.indexOf("http://") === 0 || data.indexOf("https://") === 0) {
+        if (data.indexOf("http://") === 0 || data.indexOf("https://") === 0) {
             return '<a target="_blank" href="' + data + '">' + data + '</a>';
         }
 
