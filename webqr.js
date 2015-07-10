@@ -95,13 +95,13 @@ var QRWebScanner = (function (QRE) {
             Create.element('canvas', function(canvas){
                 Set.canvasBox(canvas);
                 Get.canvasBox().id = 'qrCanvas';
-                canvas.width = '640';
-                canvas.height = '480';
+                setCanvasBoxSize();
 
                 appBox.appendChild(canvas);
             });
         },
 
+                    setCanvasBoxSize();
         resultBox: function () {
             Create.element('div', function(result){
                 Set.resultBox(result);
@@ -194,6 +194,11 @@ var QRWebScanner = (function (QRE) {
         }
 
         return data;
+    },
+
+    setCanvasBoxSize = function() {
+        Get.canvasBox().width = '640';
+        Get.canvasBox().height = '480';
     };
 
     return {
