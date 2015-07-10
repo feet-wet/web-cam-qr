@@ -1,6 +1,6 @@
 "use strict";
 
-var QRWebScanner = (function () {
+var QRWebScanner = (function (QRE) {
 
     var appBox = false,
         canvasBox = false,
@@ -156,6 +156,7 @@ var QRWebScanner = (function () {
     },
 
     captureToCanvasBox = function(){
+
         try {
             Get.canvasBox().getContext("2d").drawImage(Get.videoBox(),0,0);
             decodeCapture(Get.canvasBox().toDataURL('image/jpg'));
@@ -170,9 +171,9 @@ var QRWebScanner = (function () {
         (Get.imgProgressBar()) ? insertToResultBox(Get.imgProgressBar()) : '';
 
         try {
-            QRWebScannerEngine.qrcode.decode(capture);
-            (QRWebScannerEngine.qrcode.currentStatus) ?
-                insertToResultBox(QRWebScannerEngine.qrcode.result) : setTimeout(captureToCanvasBox, 500);
+            QRE.qrcode.decode(capture);
+            (QRE.qrcode.currentStatus) ?
+                insertToResultBox(QRE.qrcode.result) : setTimeout(captureToCanvasBox, 500);
         }
         catch(e) {
             console.log(e);
@@ -199,4 +200,4 @@ var QRWebScanner = (function () {
         init: init
     }
 
-}());
+}(QRWebScannerEngine));
