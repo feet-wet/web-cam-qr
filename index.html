@@ -14,21 +14,26 @@
         text-align: center;
         margin: 0 auto;
     }
-    #qrVideo{
-        border: 3px solid #4D4D4D;
+    .qrVideo,
+    .qrCanvas {
+        border: 3px solid rgba(0, 0, 0, 0.8);
+    }
+    .qrVideo {
         transform: scaleX(-1);
         -o-transform: scaleX(-1);
         -ms-transform: scaleX(-1);
         -moz-transform: scaleX(-1);
         -webkit-transform: scaleX(-1);
     }
-    #qrCanvas {
+    .qrCanvas {
         display: none;
     }
-    #qrResult {
+    .qrResult {
         display: block;
+        height: auto;
         font-family: Arial, san-serif;
         padding: 20px 0;
+        word-wrap: break-word;
         margin: 0 auto;
     }
 </style>
