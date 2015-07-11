@@ -128,7 +128,7 @@ var QRWebScanner = (function (QRE) {
         videoBox: function () {
             Create.element('video', function(video){
                 Set.videoBox(video);
-                Get.videoBox().id = 'qrVideo';
+                Get.videoBox().className = 'qrVideo';
                 Get.videoBox().autoplay = 'autoplay';
 
                 appBox.appendChild(video);
@@ -139,7 +139,7 @@ var QRWebScanner = (function (QRE) {
         canvasBox: function () {
             Create.element('canvas', function(canvas){
                 Set.canvasBox(canvas);
-                Get.canvasBox().id = 'qrCanvas';
+                Get.canvasBox().className = 'qrCanvas';
                 setCanvasBoxSize();
 
                 appBox.appendChild(canvas);
@@ -149,7 +149,7 @@ var QRWebScanner = (function (QRE) {
         btnsBox: function () {
             Create.element('div', function(btns){
                 Set.btnsBox(btns);
-                Get.btnsBox().id = 'qrBtns';
+                Get.btnsBox().className = 'qrBtns';
 
                 appBox.appendChild(btns);
 
@@ -163,7 +163,7 @@ var QRWebScanner = (function (QRE) {
         btnCam: function () {
             Create.element('div', function(btnCam){
                 Set.btnCam(btnCam);
-                Get.btnCam().id = 'qrBtnCam';
+                Get.btnCam().className = 'qrBtnCam';
                 Get.btnCam().show = true;
                 Get.btnCam().onclick = function() {
                     Get.videoBox().style.display = 'block';
@@ -190,7 +190,7 @@ var QRWebScanner = (function (QRE) {
         btnImg: function () {
             Create.element('div', function(btnImg){
                 Set.btnImg(btnImg);
-                Get.btnImg().id = 'qrBtnImg';
+                Get.btnImg().className = 'qrBtnImg';
                 Get.btnImg().onclick = function() {
                     Get.videoBox().style.display = 'none';
 
@@ -235,7 +235,7 @@ var QRWebScanner = (function (QRE) {
         resultBox: function () {
             Create.element('div', function(result){
                 Set.resultBox(result);
-                Get.resultBox().id = 'qrResult';
+                Get.resultBox().className = 'qrResult';
                 Get.resultBox().style.width = settings.width;
 
                 appBox.appendChild(result);
