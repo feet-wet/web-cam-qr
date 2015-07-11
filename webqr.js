@@ -6,6 +6,9 @@ var QRWebScanner = (function (QRE) {
         canvasBox = false,
         videoBox = false,
         resultBox = false,
+        btnsBox = false,
+        btnCam = false,
+        btnImg = false,
         imgProgressBar = false,
         imgProgressBarSRC ='data:image/gif;base64,R0lGODlhXgAPAKEDAJqamsXFxebm5v///yH/C05FVFNDQVBFMi4wAwEAAAAh/hVDcmVhdGVkIHdpdGggVGhlIEdJTVAAIfkEBQoAAwAsAAAAAF4ADwAAAoGcj6nL7Q+jnLTai7PeTfgPHuAoiORnnqWheul5APJMK+063C+5j33IasVoRJswqPqhkDAmz+kzAKbUqjEJBeaOW2y3+X0OqmTAFazLLsNRtjY9LlPPYride/fK54k8Gg/oBbc3RdfmVxf4p0do+KaYKAjZRmjGcYmZqbnJ2enpWQAAIfkEBQoAAwAsRAADABcACQAAAh+Ej6PB7QiBGq6GmJZt+MzNdZIGiiMFXuKXmmy5klsBACH5BAUKAAMALDcAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwqAAMAJAAJAAACNISPo8HtOoScFFkAnQ6QenEly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsHQADACQACQAAAjSEj6PB7TqEnBRZAJ0OkHpxJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwDAAMAJAAJAAACLYSPo8LtOpwUqAI438rMps1hHOUZYghmpZlOp7q+biutF61Foy1LvcPDNX6NAgAh+QQFCgADACwDAAMAFwAJAAACH4yPo8DtCIMaroKYlm34zM11kgaKIwVe4peabLmSWwEAIfkEBQoAAwAsAwADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwdAAMAJAAJAAACNJSPo8HtOoCcFFkBnQ6QenAly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsKgADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAEKAAMALDcAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgA7',
 
@@ -32,6 +35,17 @@ var QRWebScanner = (function (QRE) {
             resultBox = result;
         },
 
+        btnsBox: function(btns) {
+            btnsBox = btns;
+        },
+
+        btnCam: function(btn) {
+            btnCam = btn;
+        },
+
+        btnImg: function(btn) {
+            btnImg = btn;
+        },
         imgProgressBar: function(img) {
             imgProgressBar = img;
         }
@@ -54,6 +68,19 @@ var QRWebScanner = (function (QRE) {
         resultBox: function() {
             return resultBox;
         },
+
+        btnsBox: function() {
+            return btnsBox;
+        },
+
+        btnCam: function() {
+            return btnCam;
+        },
+
+        btnImg: function() {
+            return btnImg;
+        },
+
 
         imgProgressBar: function() {
             return imgProgressBar;
@@ -101,7 +128,69 @@ var QRWebScanner = (function (QRE) {
             });
         },
 
+        btnsBox: function () {
+            Create.element('div', function(btns){
+                Set.btnsBox(btns);
+                Get.btnsBox().id = 'qrBtns';
+
+                appBox.appendChild(btns);
+
+                Create.btnCam();
+                Create.btnImg();
+                Create.inputFile();
+                Create.labelFile();
+            });
+        },
+
+        btnCam: function () {
+            Create.element('div', function(btnCam){
+                Set.btnCam(btnCam);
+                Get.btnCam().id = 'qrBtnCam';
+                Get.btnCam().show = true;
+                Get.btnCam().onclick = function() {
+                    Get.videoBox().style.display = 'block';
+
+                    Get.btnImg().style.opacity = .5;
+                    Get.btnCam().style.opacity = .8;
+
+                    Get.labelFile().style.display = 'none';
+
+                    Get.canvasBox().style.display = 'none';
                     setCanvasBoxSize();
+
+                    if(Get.btnCam().show) {
+                        QRE.qrcode.currentStatus = undefined;
+                        captureToCanvasBox();
+                    }
+                    Get.btnCam().show = true;
+                };
+
+                btnsBox.appendChild(btnCam);
+            });
+        },
+
+        btnImg: function () {
+            Create.element('div', function(btnImg){
+                Set.btnImg(btnImg);
+                Get.btnImg().id = 'qrBtnImg';
+                Get.btnImg().onclick = function() {
+                    Get.videoBox().style.display = 'none';
+
+                    Get.btnImg().style.opacity = .8;
+                    Get.btnCam().style.opacity = .5;
+
+                    Get.canvasBox().style.display = 'block';
+                    Get.canvasBox().width = settings.width;
+                    Get.canvasBox().height = settings.height;
+
+                    Get.labelFile().style.display = 'block';
+
+                    Get.btnCam().show = false;
+                };
+
+                btnsBox.appendChild(btnImg);
+            });
+        },
         resultBox: function () {
             Create.element('div', function(result){
                 Set.resultBox(result);
@@ -133,6 +222,7 @@ var QRWebScanner = (function (QRE) {
         settings.height = data.height || 240;
 
         Create.appBox(container);
+        Create.btnsBox();
         Create.videoBox();
         Create.canvasBox();
         Create.resultBox();
