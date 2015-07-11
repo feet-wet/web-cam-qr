@@ -9,6 +9,8 @@ var QRWebScanner = (function (QRE) {
         btnsBox = false,
         btnCam = false,
         btnImg = false,
+        inputFile = false,
+        labelFile = false,
         imgProgressBar = false,
         imgProgressBarSRC ='data:image/gif;base64,R0lGODlhXgAPAKEDAJqamsXFxebm5v///yH/C05FVFNDQVBFMi4wAwEAAAAh/hVDcmVhdGVkIHdpdGggVGhlIEdJTVAAIfkEBQoAAwAsAAAAAF4ADwAAAoGcj6nL7Q+jnLTai7PeTfgPHuAoiORnnqWheul5APJMK+063C+5j33IasVoRJswqPqhkDAmz+kzAKbUqjEJBeaOW2y3+X0OqmTAFazLLsNRtjY9LlPPYride/fK54k8Gg/oBbc3RdfmVxf4p0do+KaYKAjZRmjGcYmZqbnJ2enpWQAAIfkEBQoAAwAsRAADABcACQAAAh+Ej6PB7QiBGq6GmJZt+MzNdZIGiiMFXuKXmmy5klsBACH5BAUKAAMALDcAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwqAAMAJAAJAAACNISPo8HtOoScFFkAnQ6QenEly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsHQADACQACQAAAjSEj6PB7TqEnBRZAJ0OkHpxJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwDAAMAJAAJAAACLYSPo8LtOpwUqAI438rMps1hHOUZYghmpZlOp7q+biutF61Foy1LvcPDNX6NAgAh+QQFCgADACwDAAMAFwAJAAACH4yPo8DtCIMaroKYlm34zM11kgaKIwVe4peabLmSWwEAIfkEBQoAAwAsAwADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwdAAMAJAAJAAACNJSPo8HtOoCcFFkBnQ6QenAly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsKgADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAEKAAMALDcAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgA7',
 
@@ -46,6 +48,15 @@ var QRWebScanner = (function (QRE) {
         btnImg: function(btn) {
             btnImg = btn;
         },
+
+        inputFile: function(inputF) {
+            inputFile = inputF;
+        },
+
+        labelFile: function(labelF) {
+            labelFile = labelF;
+        },
+
         imgProgressBar: function(img) {
             imgProgressBar = img;
         }
@@ -81,6 +92,13 @@ var QRWebScanner = (function (QRE) {
             return btnImg;
         },
 
+        inputFile: function() {
+            return inputFile;
+        },
+
+        labelFile: function() {
+            return labelFile;
+        },
 
         imgProgressBar: function() {
             return imgProgressBar;
@@ -191,10 +209,34 @@ var QRWebScanner = (function (QRE) {
                 btnsBox.appendChild(btnImg);
             });
         },
+
+        inputFile: function () {
+            Create.element('input', function(inputF){
+                Set.inputFile(inputF);
+                Get.inputFile().id = 'qrInputFile';
+                Get.inputFile().type = 'file';
+                Get.inputFile().width = '';
+                Get.inputFile().height = '';
+
+                btnsBox.appendChild(inputF);
+            });
+        },
+
+        labelFile: function () {
+            Create.element('label', function(labelF){
+                Set.labelFile(labelF);
+                Get.labelFile().htmlFor = Get.inputFile().id;
+                Get.labelFile().innerHTML = 'Upload';
+
+                btnsBox.appendChild(labelF);
+            });
+        },
+
         resultBox: function () {
             Create.element('div', function(result){
                 Set.resultBox(result);
                 Get.resultBox().id = 'qrResult';
+                Get.resultBox().style.width = settings.width;
 
                 appBox.appendChild(result);
             });
