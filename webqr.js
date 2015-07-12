@@ -300,12 +300,12 @@ var QRWebScanner = (function (QRE) {
     },
 
     decodeCapture = function(capture){
-        (Get.imgProgressBar()) ? insertToResultBox(Get.imgProgressBar()) : '';
+        (Get.imgProgressBar()) ? ResultBox.insert(Get.imgProgressBar()) : '';
 
         try {
             QRE.qrcode.decode(capture);
             (QRE.qrcode.currentStatus) ?
-                insertToResultBox(QRE.qrcode.result) : setTimeout(captureToCanvasBox, 500);
+                ResultBox.insert(QRE.qrcode.result) : setTimeout(captureToCanvasBox, 500);
         }
         catch(e) {
             console.log(e);
@@ -313,19 +313,30 @@ var QRWebScanner = (function (QRE) {
         }
     },
 
-    insertToResultBox = function (data) {
-        Get.resultBox().innerHTML = '';
 
-        (typeof data == 'string') ?
-            Get.resultBox().innerHTML = checkForLink(data) : Get.resultBox().appendChild(data);
-    },
 
-    checkForLink = function (data) {
-        if (data.indexOf("http://") === 0 || data.indexOf("https://") === 0) {
-            return '<a target="_blank" href="' + data + '">' + data + '</a>';
         }
 
-        return data;
+    },
+
+    ResultBox = {
+        insert: function (data) {
+            console.log(data);
+            (typeof data == 'string') ?
+                Get.resultBox().innerHTML = ResultBox.checkForLink(data) : Get.resultBox().appendChild(data);
+        },
+
+        clear: function() {
+            Get.resultBox().innerHTML = '';
+        },
+
+        checkForLink: function (data) {
+            if (data.indexOf("http://") === 0 || data.indexOf("https://") === 0) {
+                return '<a target="_blank" href="' + data + '">' + data + '</a>';
+            }
+
+            return data;
+        }
     },
 
     setCanvasBoxSize = function() {
