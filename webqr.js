@@ -164,7 +164,7 @@ var QRWebScanner = (function (QRE) {
             Create.element('div', function(btnCam){
                 Set.btnCam(btnCam);
                 Get.btnCam().className = 'qrBtnCam';
-                Get.btnCam().show = true;
+                Get.btnCam().active = true;
                 Get.btnCam().onclick = function() {
                     Get.videoBox().style.display = 'block';
 
@@ -176,11 +176,11 @@ var QRWebScanner = (function (QRE) {
                     Get.canvasBox().style.display = 'none';
                     setCanvasBoxSize();
 
-                    if(Get.btnCam().show) {
+                    if(Get.btnCam().active) {
                         QRE.qrcode.currentStatus = undefined;
                         captureToCanvasBox();
                     }
-                    Get.btnCam().show = true;
+                    Get.btnCam().active = true;
                 };
 
                 btnsBox.appendChild(btnCam);
@@ -203,7 +203,7 @@ var QRWebScanner = (function (QRE) {
 
                     Get.labelFile().style.display = 'block';
 
-                    Get.btnCam().show = false;
+                    Get.btnCam().active = false;
                 };
 
                 btnsBox.appendChild(btnImg);
