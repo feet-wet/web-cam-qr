@@ -19,6 +19,23 @@ var QRWebScanner = (function (QRE) {
             height: false
         },
 
+    init = function(container, data){
+        if(!container) return;
+        if(!data) data = false;
+
+        settings.width = data.width || 320;
+        settings.height = data.height || 240;
+
+        Create.appBox(container);
+        Create.btnsBox();
+        Create.videoBox();
+        Create.canvasBox();
+        Create.resultBox();
+        Create.progressBar();
+
+        //Add callback functionality
+    },
+
     Set = {
 
         appBox: function(appB) {
@@ -132,7 +149,7 @@ var QRWebScanner = (function (QRE) {
                 Get.videoBox().autoplay = 'autoplay';
 
                 appBox.appendChild(video);
-                initVideoStream();
+                VideoStream.init();
             });
         },
 
@@ -178,7 +195,7 @@ var QRWebScanner = (function (QRE) {
 
                     if(Get.btnCam().active) {
                         QRE.qrcode.currentStatus = undefined;
-                        captureToCanvasBox();
+                        VideoStream.captureImage();
                     }
                     Get.btnCam().active = true;
                 };
@@ -202,6 +219,7 @@ var QRWebScanner = (function (QRE) {
                     Get.canvasBox().height = settings.height;
 
                     Get.labelFile().style.display = 'block';
+                    ResultBox.clear();
 
                     Get.btnCam().active = false;
                 };
@@ -256,61 +274,52 @@ var QRWebScanner = (function (QRE) {
 
     },
 
-    init = function(container, data){
-        if(!container) return;
-        if(!data) data = false;
+    VideoStream = {
 
-        settings.width = data.width || 320;
-        settings.height = data.height || 240;
+        init: function () {
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
 
-        Create.appBox(container);
-        Create.btnsBox();
-        Create.videoBox();
-        Create.canvasBox();
-        Create.resultBox();
-        Create.progressBar();
+            navigator.getUserMedia({video: true},
+                function (stream) {
+                    Get.videoBox().src = window.URL.createObjectURL(stream);
+                    setTimeout(VideoStream.captureImage, 500);
+                }, function () {
+                    console.log('with the video stream that something is wrong or the user banned :P');
+                });
+        },
 
-        //Add callback functionality
+        captureImage: function () {
+            if(!Get.btnCam().active) return;
+
+            try {
+                Get.canvasBox().getContext("2d").drawImage(Get.videoBox(), 0, 0);
+                Decode.capture(Get.canvasBox().toDataURL('image/jpg'));
+            }
+            catch(e) {
+                console.log(e);
+                setTimeout(VideoStream.captureImage, 500);
+            }
+        }
+
     },
 
-    initVideoStream = function(){
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-        window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
+    Decode = {
 
-        navigator.getUserMedia({video: true},
-            function (stream) {
-                 Get.videoBox().src = window.URL.createObjectURL(stream);
-                 setTimeout(captureToCanvasBox, 500);
-        }, function () {
-                console.log('with the video stream that something is wrong or the user banned :P');
-        });
+        capture: function(capture) {
+            (Get.imgProgressBar()) ? ResultBox.insert(Get.imgProgressBar()) : '';
 
-    },
-
-    captureToCanvasBox = function(){
-
-        try {
-            Get.canvasBox().getContext("2d").drawImage(Get.videoBox(),0,0);
-            decodeCapture(Get.canvasBox().toDataURL('image/jpg'));
+            try {
+                QRE.qrcode.decode(capture);
+                (QRE.qrcode.currentStatus) ?
+                    ResultBox.insert(QRE.qrcode.result) : setTimeout(VideoStream.captureImage, 500);
+            }
+            catch(e) {
+                console.log(e);
+                if(Get.btnCam().active) setTimeout(VideoStream.captureImage, 500);
+            }
         }
-        catch(e) {
-            console.log(e);
-            setTimeout(captureToCanvasBox, 500);
-        }
-    },
 
-    decodeCapture = function(capture){
-        (Get.imgProgressBar()) ? ResultBox.insert(Get.imgProgressBar()) : '';
-
-        try {
-            QRE.qrcode.decode(capture);
-            (QRE.qrcode.currentStatus) ?
-                ResultBox.insert(QRE.qrcode.result) : setTimeout(captureToCanvasBox, 500);
-        }
-        catch(e) {
-            console.log(e);
-            setTimeout(captureToCanvasBox, 500);
-        }
     },
 
 
@@ -321,7 +330,8 @@ var QRWebScanner = (function (QRE) {
 
     ResultBox = {
         insert: function (data) {
-            console.log(data);
+            ResultBox.clear();
+
             (typeof data == 'string') ?
                 Get.resultBox().innerHTML = ResultBox.checkForLink(data) : Get.resultBox().appendChild(data);
         },
