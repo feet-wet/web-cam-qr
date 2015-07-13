@@ -294,7 +294,7 @@ var QRWebScanner = (function (QRE) {
 
             try {
                 Get.canvasBox().getContext("2d").drawImage(Get.videoBox(), 0, 0);
-                Decode.capture(Get.canvasBox().toDataURL('image/jpg'));
+                Decode.image(Get.canvasBox().toDataURL('image/jpg'));
             }
             catch(e) {
                 console.log(e);
@@ -306,7 +306,7 @@ var QRWebScanner = (function (QRE) {
 
     Decode = {
 
-        capture: function(capture) {
+        image: function(capture) {
             (Get.imgProgressBar()) ? ResultBox.insert(Get.imgProgressBar()) : '';
 
             try {
