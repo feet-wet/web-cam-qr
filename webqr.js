@@ -181,6 +181,7 @@ var QRWebScanner = (function (QRE) {
             Create.element('div', function(btnCam){
                 Set.btnCam(btnCam);
                 Get.btnCam().className = 'qrBtnCam';
+                Get.btnCam().title = 'Scan from WebCam';
                 Get.btnCam().active = true;
                 Get.btnCam().onclick = function() {
                     Get.videoBox().style.display = 'block';
@@ -208,6 +209,7 @@ var QRWebScanner = (function (QRE) {
             Create.element('div', function(btnImg){
                 Set.btnImg(btnImg);
                 Get.btnImg().className = 'qrBtnImg';
+                Get.btnCam().title = 'Scan from uploading image';
                 Get.btnImg().onclick = function() {
                     Get.videoBox().style.display = 'none';
 
