@@ -301,19 +301,43 @@ var QRWebScanner = (function (QRE) {
         }
 
     },
+
+    Canvas = {
+
+        captureImage: function (objectSource) {
+            setTimeout(function() {
+                Canvas.drawImage(objectSource);
+                Canvas.decode(objectSource);
+            }, 500);
+
+            //try {
+            //    Canvas.drawImage(objectSource);
+            //    Canvas.decode(objectSource)
+            //}
+            //catch(e) {
+            //    console.log(e);
+            //    setTimeout(function() {
+            //        Canvas.captureImage(objectSource);
+            //    }, 500);
+            //}
+
         },
 
-        captureImage: function () {
-            if(!Get.btnCam().active) return;
+        drawImage: function(objectSource) {
+            Get.canvasBox().getContext("2d").drawImage(objectSource, 0, 0, settings.width, settings.height);
+        },
 
-            try {
-                Get.canvasBox().getContext("2d").drawImage(Get.videoBox(), 0, 0);
-                Decode.image(Get.canvasBox().toDataURL('image/jpg'));
-            }
-            catch(e) {
-                console.log(e);
-                setTimeout(VideoStream.captureImage, 500);
-            }
+        decode: function(objectSource) {
+            Decode.image(Get.canvasBox().toDataURL('image/jpg'), objectSource);
+        },
+
+        clear: function() {
+            Get.canvasBox().getContext("2d").clearRect(0, 0, settings.width, settings.width);
+        },
+
+        setSize: function() {
+            Get.canvasBox().width = '640';
+            Get.canvasBox().height = '480';
         }
 
     },
