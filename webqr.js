@@ -6,6 +6,7 @@ var QRWebScanner = (function (QRE) {
         canvasBox = false,
         videoBox = false,
         resultBox = false,
+        resultData = false,
         btnsBox = false,
         btnCam = false,
         btnImg = false,
@@ -320,6 +321,7 @@ var QRWebScanner = (function (QRE) {
             catch(e) {
                 console.log(e);
                 if(Get.btnCam().active) setTimeout(VideoStream.captureImage, 500);
+                resultData = QRE.qrcode.result;
             }
         }
 
