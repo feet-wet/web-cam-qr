@@ -405,16 +405,15 @@ var QRWebScanner = (function (QRE) {
         }
 
     },
-    ResultBox = {
+
+    Result = {
         insert: function (data) {
-            ResultBox.clear();
+            Result.clearBox();
 
             (typeof data == 'string') ?
-                Get.resultBox().innerHTML = ResultBox.checkForLink(data) : Get.resultBox().appendChild(data);
-        },
+                Get.resultBox().innerHTML = Result.checkForLink(data) : Get.resultBox().appendChild(data);
 
-        clear: function() {
-            Get.resultBox().innerHTML = '';
+            Result.clear();
         },
 
         checkForLink: function (data) {
@@ -423,12 +422,17 @@ var QRWebScanner = (function (QRE) {
             }
 
             return data;
-        }
-    },
+        },
 
-    setCanvasBoxSize = function() {
-        Get.canvasBox().width = '640';
-        Get.canvasBox().height = '480';
+        clearBox: function() {
+            Get.resultBox().innerHTML = '';
+        },
+
+        clear: function() {
+            setTimeout(function(){
+                QRE.qrcode.currentStatus = QRE.qrcode.result = null;
+            }, 500);
+        }
     };
 
     return {
