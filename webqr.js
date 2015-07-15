@@ -327,8 +327,21 @@ var QRWebScanner = (function (QRE) {
 
     },
 
+    File = {
 
+        accept: function(file) {
+            var img = new Image,
+                reader = new FileReader();
 
+            reader.onload = function() {
+                img.src = reader.result;
+
+                setTimeout(function(){
+                    Canvas.captureImage(img)
+                }, 500);
+            };
+
+            reader.readAsDataURL(file);
         }
 
     },
