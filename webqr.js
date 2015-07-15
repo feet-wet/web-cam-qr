@@ -34,8 +34,10 @@ var QRWebScanner = (function (QRE) {
         Create.resultBox();
         Create.progressBar();
 
-        //Add callback functionality
+        WebCam.init();
         Loader.start();
+
+        //Add callback functionality and return result
     },
 
     Set = {
@@ -151,7 +153,6 @@ var QRWebScanner = (function (QRE) {
                 Get.videoBox().autoplay = 'autoplay';
 
                 appBox.appendChild(video);
-                VideoStream.init();
             });
         },
 
@@ -159,7 +160,7 @@ var QRWebScanner = (function (QRE) {
             Create.element('canvas', function(canvas){
                 Set.canvasBox(canvas);
                 Get.canvasBox().className = 'qrCanvas';
-                setCanvasBoxSize();
+                Canvas.setSize();
 
                 appBox.appendChild(canvas);
             });
@@ -184,7 +185,7 @@ var QRWebScanner = (function (QRE) {
                 Set.btnCam(btnCam);
                 Get.btnCam().className = 'qrBtnCam';
                 Get.btnCam().title = 'Scan from WebCam';
-                Get.btnCam().active = true;
+                Get.btnCam().active = true; //ToDo: to rework
                 Get.btnCam().onclick = function() {
                     Get.videoBox().style.display = 'block';
 
@@ -194,13 +195,14 @@ var QRWebScanner = (function (QRE) {
                     Get.labelFile().style.display = 'none';
 
                     Get.canvasBox().style.display = 'none';
-                    setCanvasBoxSize();
+                    Canvas.setSize();
 
-                    if(Get.btnCam().active) {
-                        QRE.qrcode.currentStatus = undefined;
-                        VideoStream.captureImage();
-                    }
-                    Get.btnCam().active = true;
+                    if(Get.btnCam().active) { //ToDo: to rework
+                        Loader.start();
+                        Decode.start(Get.videoBox());
+                    };
+
+                    Get.btnCam().active = true; //ToDo: to rework
                 };
 
                 btnsBox.appendChild(btnCam);
@@ -213,6 +215,7 @@ var QRWebScanner = (function (QRE) {
                 Get.btnImg().className = 'qrBtnImg';
                 Get.btnCam().title = 'Scan from uploading image';
                 Get.btnImg().onclick = function() {
+                    Decode.stop();
                     Get.videoBox().style.display = 'none';
 
                     Get.btnImg().style.opacity = .8;
@@ -223,9 +226,10 @@ var QRWebScanner = (function (QRE) {
                     Get.canvasBox().height = settings.height;
 
                     Get.labelFile().style.display = 'block';
-                    ResultBox.clear();
 
-                    Get.btnCam().active = false;
+                    Result.clearBox();
+
+                    Get.btnCam().active = false; //ToDo: to rework
                 };
 
                 btnsBox.appendChild(btnImg);
