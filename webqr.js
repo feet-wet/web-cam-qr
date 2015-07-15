@@ -281,7 +281,7 @@ var QRWebScanner = (function (QRE) {
 
     },
 
-    VideoStream = {
+    WebCam = {
 
         init: function () {
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -289,11 +289,18 @@ var QRWebScanner = (function (QRE) {
 
             navigator.getUserMedia({video: true},
                 function (stream) {
+
                     Get.videoBox().src = window.URL.createObjectURL(stream);
-                    setTimeout(VideoStream.captureImage, 500);
+                    setTimeout(function() {
+                        Canvas.captureImage(Get.videoBox());
+                    }, 500);
+
                 }, function () {
                     console.log('with the video stream that something is wrong or the user banned :P');
                 });
+        }
+
+    },
         },
 
         captureImage: function () {
