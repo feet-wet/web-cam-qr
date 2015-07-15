@@ -344,18 +344,36 @@ var QRWebScanner = (function (QRE) {
 
     Decode = {
 
-        image: function(capture) {
-            (Get.imgProgressBar()) ? ResultBox.insert(Get.imgProgressBar()) : '';
+        start: function(object) {
+            QRE.qrcode.currentStatus = undefined;
+            Canvas.captureImage(object);
+        },
+
+        stop: function() {
+            QRE.qrcode.currentStatus = true;
+            QRE.qrcode.result = '';
+
+            setTimeout(Canvas.clear, 500);
+        },
+
+        image: function(data64Image, objectSource) {
 
             try {
-                QRE.qrcode.decode(capture);
-                (QRE.qrcode.currentStatus) ?
-                    ResultBox.insert(QRE.qrcode.result) : setTimeout(VideoStream.captureImage, 500);
+                QRE.qrcode.decode(data64Image);
+                Decode.check(objectSource)
             }
             catch(e) {
                 console.log(e);
-                if(Get.btnCam().active) setTimeout(VideoStream.captureImage, 500);
+                Canvas.captureImage(objectSource);
+            }
+        },
+
+        check: function(objectSource) {
+            if (QRE.qrcode.currentStatus && QRE.qrcode.result) {
                 resultData = QRE.qrcode.result;
+                Result.insert(QRE.qrcode.result);
+            } else {
+                Canvas.captureImage(objectSource);
             }
         }
 
