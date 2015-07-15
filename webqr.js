@@ -34,6 +34,7 @@ var QRWebScanner = (function (QRE) {
         Create.progressBar();
 
         //Add callback functionality
+        Loader.start();
     },
 
     Set = {
@@ -330,6 +331,13 @@ var QRWebScanner = (function (QRE) {
 
     },
 
+    Loader = {
+
+        start: function() {
+            Result.insert(Get.imgProgressBar());
+        }
+
+    },
     ResultBox = {
         insert: function (data) {
             ResultBox.clear();
