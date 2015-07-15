@@ -239,6 +239,9 @@ var QRWebScanner = (function (QRE) {
                 Get.inputFile().type = 'file';
                 Get.inputFile().width = '';
                 Get.inputFile().height = '';
+                Get.inputFile().onchange = function() {
+                  File.accept(this.files[0])
+                };
 
                 btnsBox.appendChild(inputF);
             });
