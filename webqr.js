@@ -305,9 +305,7 @@ var QRWebScanner = (function (QRE) {
                 function (stream) {
 
                     Get.videoBox().src = window.URL.createObjectURL(stream);
-                    setTimeout(function() {
-                        Canvas.captureImage(Get.videoBox());
-                    }, 500);
+                    Canvas.captureImage(Get.videoBox());
 
                 }, function () {
                     console.log('with the video stream that something is wrong or the user banned :P');
@@ -323,18 +321,6 @@ var QRWebScanner = (function (QRE) {
                 Canvas.drawImage(objectSource);
                 Canvas.decode(objectSource);
             }, 500);
-
-            //try {
-            //    Canvas.drawImage(objectSource);
-            //    Canvas.decode(objectSource)
-            //}
-            //catch(e) {
-            //    console.log(e);
-            //    setTimeout(function() {
-            //        Canvas.captureImage(objectSource);
-            //    }, 500);
-            //}
-
         },
 
         drawImage: function(objectSource) {
@@ -371,15 +357,8 @@ var QRWebScanner = (function (QRE) {
         },
 
         image: function(data64Image, objectSource) {
-
-            try {
-                QRE.qrcode.decode(data64Image);
-                Decode.check(objectSource)
-            }
-            catch(e) {
-                console.log(e);
-                Canvas.captureImage(objectSource);
-            }
+            QRE.qrcode.decode(data64Image);
+            Decode.check(objectSource)
         },
 
         check: function(objectSource) {
@@ -402,9 +381,7 @@ var QRWebScanner = (function (QRE) {
             reader.onload = function() {
                 img.src = reader.result;
 
-                setTimeout(function(){
-                    Canvas.captureImage(img)
-                }, 500);
+                Canvas.captureImage(img);
             };
 
             reader.readAsDataURL(file);
