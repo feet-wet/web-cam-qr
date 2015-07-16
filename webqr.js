@@ -425,7 +425,8 @@ var QRWebScanner = (function (QRE) {
 
         clear: function() {
             setTimeout(function(){
-                QRE.qrcode.currentStatus = QRE.qrcode.result = null;
+                QRE.qrcode.currentStatus = true;
+                QRE.qrcode.result = '';
             }, 500);
         }
     };
