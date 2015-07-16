@@ -372,9 +372,13 @@ var QRWebScanner = (function (QRE) {
 
     },
 
-    File = {
+    File = {//ToDo: Type of file
 
         accept: function(file) {
+            Canvas.clear();
+            Result.clearBox();
+            Loader.start();
+
             var img = new Image,
                 reader = new FileReader();
 
