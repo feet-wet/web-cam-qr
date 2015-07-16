@@ -134,6 +134,16 @@ var QRWebScanner = (function (QRE) {
             wrapper.width = settings.width;
             wrapper.height = settings.height;
 
+            wrapper.show = function() {
+                this.style.display = 'block';
+            };
+            wrapper.hide = function() {
+                this.style.display = 'none';
+            };
+            wrapper.setOpacity = function(opacity) {
+                this.style.opacity = opacity;
+            };
+
             if(callback !== undefined) callback(wrapper);
         },
 
@@ -187,20 +197,20 @@ var QRWebScanner = (function (QRE) {
                 Get.btnCam().title = 'Scan from WebCam';
                 Get.btnCam().active = true; //ToDo: to rework
                 Get.btnCam().onclick = function() {
-                    Get.videoBox().style.display = 'block';
 
-                    Get.btnImg().style.opacity = .5;
-                    Get.btnCam().style.opacity = .8;
+                    Get.videoBox().show();
+                    Get.labelFile().hide();
+                    Get.canvasBox().hide();
 
-                    Get.labelFile().style.display = 'none';
+                    Get.btnImg().setOpacity(.5);
+                    Get.btnCam().setOpacity(.8);
 
-                    Get.canvasBox().style.display = 'none';
                     Canvas.setSize();
 
                     if(Get.btnCam().active) { //ToDo: to rework
                         Loader.start();
                         Decode.start(Get.videoBox());
-                    };
+                    }
 
                     Get.btnCam().active = true; //ToDo: to rework
                 };
@@ -216,16 +226,16 @@ var QRWebScanner = (function (QRE) {
                 Get.btnCam().title = 'Scan from uploading image';
                 Get.btnImg().onclick = function() {
                     Decode.stop();
-                    Get.videoBox().style.display = 'none';
+                    Get.videoBox().hide();
 
-                    Get.btnImg().style.opacity = .8;
-                    Get.btnCam().style.opacity = .5;
+                    Get.btnImg().setOpacity(.8);
+                    Get.btnCam().setOpacity(.5);
 
-                    Get.canvasBox().style.display = 'block';
+                    Get.canvasBox().show();
+                    Get.labelFile().show();
+
                     Get.canvasBox().width = settings.width;
                     Get.canvasBox().height = settings.height;
-
-                    Get.labelFile().style.display = 'block';
 
                     Result.clearBox();
 
