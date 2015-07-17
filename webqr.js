@@ -15,8 +15,8 @@ var QRWebScanner = (function (QRE) {
         imgProgressBar = false,
 
     settings = {
-            width: false,
-            height: false,
+            width: 320,
+            height: 240,
             id: {
                 appBox: 'qrApp',
                 inputFile: 'qrInputFile'
