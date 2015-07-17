@@ -199,7 +199,6 @@ var QRWebScanner = (function (QRE) {
                 Get.btnCam().title = 'Scan from WebCam';
                 Get.btnCam().active = true; //ToDo: to rework
                 Get.btnCam().onclick = function() {
-                    Decode.state = true;
 
                     Get.videoBox().show();
                     Get.labelFile().hide();
@@ -210,14 +209,14 @@ var QRWebScanner = (function (QRE) {
 
                     Canvas.setSize();
 
-                    if(Get.btnCam().active) { //ToDo: to rework
+                    if(WebCam.state) {
                         Result.clearBox();
                         Loader.start();
+                        Decode.state = true;
                         Decode.start(Get.videoBox());
                     }
 
-
-                    Get.btnCam().active = true; //ToDo: to rework
+                    WebCam.state = true;
                 };
 
                 btnsBox.appendChild(btnCam);
@@ -244,7 +243,7 @@ var QRWebScanner = (function (QRE) {
 
                     Result.clearBox();
 
-                    Get.btnCam().active = false; //ToDo: to rework
+                    WebCam.state = false;
                 };
 
                 btnsBox.appendChild(btnImg);
@@ -312,10 +311,15 @@ var QRWebScanner = (function (QRE) {
                     Get.videoBox().src = window.URL.createObjectURL(stream);
                     Canvas.captureImage(Get.videoBox());
 
+                    WebCam.state = true;
+
                 }, function () {
                     console.log('with the video stream that something is wrong or the user banned :P');
                 });
-        }
+        },
+
+        state: false
+
 
     },
 
