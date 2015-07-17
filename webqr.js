@@ -21,7 +21,7 @@ var QRWebScanner = (function (QRE) {
                 appBox: 'qrApp',
                 inputFile: 'qrInputFile'
             },
-            class: {
+            elClass: {
                 btnsBox: 'qrBtns',
                 btnCam: 'qrBtnCam',
                 btnImg: 'qrBtnImg',
@@ -173,7 +173,7 @@ var QRWebScanner = (function (QRE) {
         videoBox: function () {
             Create.element('video', function(video){
                 Set.videoBox(video);
-                Get.videoBox().className = settings.class.videoBox;
+                Get.videoBox().className = settings.elClass.videoBox;
                 Get.videoBox().autoplay = 'autoplay';
 
                 appBox.appendChild(video);
@@ -183,7 +183,7 @@ var QRWebScanner = (function (QRE) {
         canvasBox: function () {
             Create.element('canvas', function(canvas){
                 Set.canvasBox(canvas);
-                Get.canvasBox().className = settings.class.canvasBox;
+                Get.canvasBox().className = settings.elClass.canvasBox;
                 Canvas.setSize();
 
                 appBox.appendChild(canvas);
@@ -193,7 +193,7 @@ var QRWebScanner = (function (QRE) {
         btnsBox: function () {
             Create.element('div', function(btns){
                 Set.btnsBox(btns);
-                Get.btnsBox().className = settings.class.btnsBox;
+                Get.btnsBox().className = settings.elClass.btnsBox;
 
                 appBox.appendChild(btns);
 
@@ -207,7 +207,7 @@ var QRWebScanner = (function (QRE) {
         btnCam: function () {
             Create.element('div', function(btnCam){
                 Set.btnCam(btnCam);
-                Get.btnCam().className = settings.class.btnCam;
+                Get.btnCam().className = settings.elClass.btnCam;
                 Get.btnCam().title = 'Scan from WebCam';
                 Get.btnCam().onclick = function() {
 
@@ -237,7 +237,7 @@ var QRWebScanner = (function (QRE) {
         btnImg: function () {
             Create.element('div', function(btnImg){
                 Set.btnImg(btnImg);
-                Get.btnImg().className = settings.class.btnImg;
+                Get.btnImg().className = settings.elClass.btnImg;
                 Get.btnCam().title = 'Scan from uploading image';
                 Get.btnImg().onclick = function() {
                     Decode.stop();
@@ -289,7 +289,7 @@ var QRWebScanner = (function (QRE) {
         resultBox: function () {
             Create.element('div', function(result){
                 Set.resultBox(result);
-                Get.resultBox().className = settings.class.resultBox;
+                Get.resultBox().className = settings.elClass.resultBox;
                 Get.resultBox().style.width = settings.width;
 
                 appBox.appendChild(result);
