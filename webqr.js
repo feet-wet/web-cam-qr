@@ -210,9 +210,11 @@ var QRWebScanner = (function (QRE) {
                     Canvas.setSize();
 
                     if(Get.btnCam().active) { //ToDo: to rework
+                        Result.clearBox();
                         Loader.start();
                         Decode.start(Get.videoBox());
                     }
+
 
                     Get.btnCam().active = true; //ToDo: to rework
                 };
@@ -352,10 +354,10 @@ var QRWebScanner = (function (QRE) {
         },
 
         stop: function() {
-            QRE.qrcode.currentStatus = true;
-            QRE.qrcode.result = '';
+            QRE.qrcode.currentStatus =  QRE.qrcode.result = true;
 
             setTimeout(Canvas.clear, 500);
+            Result.clear();
         },
 
         image: function(data64Image, objectSource) {
@@ -405,7 +407,7 @@ var QRWebScanner = (function (QRE) {
     Loader = {
 
         start: function() {
-            Result.insert(Get.imgProgressBar());
+            Get.resultBox().appendChild(Get.imgProgressBar());
         }
 
     },
@@ -413,18 +415,14 @@ var QRWebScanner = (function (QRE) {
     Result = {
 
         insert: function (data) {
-
             Result.clearBox();
 
-            (typeof data == 'string') ?
-                Get.resultBox().innerHTML = Result.checkForLink(data) : Get.resultBox().appendChild(data);
+            if (typeof data == 'string') Get.resultBox().innerHTML = Result.checkForLink(data);
 
             Result.clear();
-
         },
 
         checkForLink: function (data) {
-
             if (data.indexOf("http://") === 0 || data.indexOf("https://") === 0) {
                 return '<a target="_blank" href="' + data + '">' + data + '</a>';
             }
@@ -433,18 +431,13 @@ var QRWebScanner = (function (QRE) {
         },
 
         clearBox: function() {
-
             Get.resultBox().innerHTML = '';
-
         },
 
         clear: function() {
-
             setTimeout(function(){
-                QRE.qrcode.currentStatus = true;
                 QRE.qrcode.result = '';
             }, 500);
-
         }
     };
 
