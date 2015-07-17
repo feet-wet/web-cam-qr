@@ -39,7 +39,7 @@ var QRWebScanner = (function (QRE) {
         WebCam.init();
         Loader.start();
 
-        //Add callback functionality and return result
+        //ToDo: Add callback functionality and return result
     },
 
     Set = {
