@@ -13,6 +13,7 @@ var QRWebScanner = (function (QRE) {
         inputFile = false,
         labelFile = false,
         imgProgressBar = false,
+        resetState = false,
 
     settings = {
             width: false,
@@ -199,6 +200,7 @@ var QRWebScanner = (function (QRE) {
                 Get.btnCam().title = 'Scan from WebCam';
                 Get.btnCam().active = true; //ToDo: to rework
                 Get.btnCam().onclick = function() {
+                    resetState = false;
 
                     Get.videoBox().show();
                     Get.labelFile().hide();
@@ -354,7 +356,7 @@ var QRWebScanner = (function (QRE) {
         },
 
         stop: function() {
-            QRE.qrcode.currentStatus =  QRE.qrcode.result = true;
+            resetState = true;
 
             setTimeout(Canvas.clear, 500);
             Result.clear();
@@ -366,6 +368,8 @@ var QRWebScanner = (function (QRE) {
         },
 
         check: function(objectSource) {
+            if(resetState) return;
+
             if (QRE.qrcode.currentStatus && QRE.qrcode.result) {
                 resultData = QRE.qrcode.result;
                 Result.insert(QRE.qrcode.result);
@@ -379,6 +383,7 @@ var QRWebScanner = (function (QRE) {
     File = {
 
         accept: function(file) {
+            resetState = false;
             Canvas.clear();
             Result.clearBox();
 
