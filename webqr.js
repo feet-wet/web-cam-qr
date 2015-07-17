@@ -17,6 +17,18 @@ var QRWebScanner = (function (QRE) {
     settings = {
             width: false,
             height: false,
+            id: {
+                appBox: 'qrApp',
+                inputFile: 'qrInputFile'
+            },
+            class: {
+                btnsBox: 'qrBtns',
+                btnCam: 'qrBtnCam',
+                btnImg: 'qrBtnImg',
+                videoBox: 'qrVideo',
+                canvasBox: 'qrCanvas',
+                resultBox: 'qrResult'
+            },
             imgProgressBarSRC:'data:image/gif;base64,R0lGODlhXgAPAKEDAJqamsXFxebm5v///yH/C05FVFNDQVBFMi4wAwEAAAAh/hVDcmVhdGVkIHdpdGggVGhlIEdJTVAAIfkEBQoAAwAsAAAAAF4ADwAAAoGcj6nL7Q+jnLTai7PeTfgPHuAoiORnnqWheul5APJMK+063C+5j33IasVoRJswqPqhkDAmz+kzAKbUqjEJBeaOW2y3+X0OqmTAFazLLsNRtjY9LlPPYride/fK54k8Gg/oBbc3RdfmVxf4p0do+KaYKAjZRmjGcYmZqbnJ2enpWQAAIfkEBQoAAwAsRAADABcACQAAAh+Ej6PB7QiBGq6GmJZt+MzNdZIGiiMFXuKXmmy5klsBACH5BAUKAAMALDcAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwqAAMAJAAJAAACNISPo8HtOoScFFkAnQ6QenEly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsHQADACQACQAAAjSEj6PB7TqEnBRZAJ0OkHpxJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwDAAMAJAAJAAACLYSPo8LtOpwUqAI438rMps1hHOUZYghmpZlOp7q+biutF61Foy1LvcPDNX6NAgAh+QQFCgADACwDAAMAFwAJAAACH4yPo8DtCIMaroKYlm34zM11kgaKIwVe4peabLmSWwEAIfkEBQoAAwAsAwADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwdAAMAJAAJAAACNJSPo8HtOoCcFFkBnQ6QenAly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsKgADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAEKAAMALDcAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgA7',
             imageFileType: ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp']
         //ToDo: Add to settings element's classes
@@ -152,7 +164,7 @@ var QRWebScanner = (function (QRE) {
         appBox: function (container){
             Create.element('div', function(appB){
                 Set.appBox(appB);
-                Get.appBox().id = 'qrApp';
+                Get.appBox().id = settings.id.appBox;
 
                 document.querySelector(container).appendChild(Get.appBox());
             });
@@ -161,7 +173,7 @@ var QRWebScanner = (function (QRE) {
         videoBox: function () {
             Create.element('video', function(video){
                 Set.videoBox(video);
-                Get.videoBox().className = 'qrVideo';
+                Get.videoBox().className = settings.class.videoBox;
                 Get.videoBox().autoplay = 'autoplay';
 
                 appBox.appendChild(video);
@@ -171,7 +183,7 @@ var QRWebScanner = (function (QRE) {
         canvasBox: function () {
             Create.element('canvas', function(canvas){
                 Set.canvasBox(canvas);
-                Get.canvasBox().className = 'qrCanvas';
+                Get.canvasBox().className = settings.class.canvasBox;
                 Canvas.setSize();
 
                 appBox.appendChild(canvas);
@@ -181,7 +193,7 @@ var QRWebScanner = (function (QRE) {
         btnsBox: function () {
             Create.element('div', function(btns){
                 Set.btnsBox(btns);
-                Get.btnsBox().className = 'qrBtns';
+                Get.btnsBox().className = settings.class.btnsBox;
 
                 appBox.appendChild(btns);
 
@@ -195,9 +207,8 @@ var QRWebScanner = (function (QRE) {
         btnCam: function () {
             Create.element('div', function(btnCam){
                 Set.btnCam(btnCam);
-                Get.btnCam().className = 'qrBtnCam';
+                Get.btnCam().className = settings.class.btnCam;
                 Get.btnCam().title = 'Scan from WebCam';
-                Get.btnCam().active = true; //ToDo: to rework
                 Get.btnCam().onclick = function() {
 
                     Get.videoBox().show();
@@ -226,7 +237,7 @@ var QRWebScanner = (function (QRE) {
         btnImg: function () {
             Create.element('div', function(btnImg){
                 Set.btnImg(btnImg);
-                Get.btnImg().className = 'qrBtnImg';
+                Get.btnImg().className = settings.class.btnImg;
                 Get.btnCam().title = 'Scan from uploading image';
                 Get.btnImg().onclick = function() {
                     Decode.stop();
@@ -253,7 +264,7 @@ var QRWebScanner = (function (QRE) {
         inputFile: function () {
             Create.element('input', function(inputF){
                 Set.inputFile(inputF);
-                Get.inputFile().id = 'qrInputFile';
+                Get.inputFile().id = settings.id.inputFile;
                 Get.inputFile().type = 'file';
                 Get.inputFile().width = '';
                 Get.inputFile().height = '';
@@ -278,7 +289,7 @@ var QRWebScanner = (function (QRE) {
         resultBox: function () {
             Create.element('div', function(result){
                 Set.resultBox(result);
-                Get.resultBox().className = 'qrResult';
+                Get.resultBox().className = settings.class.resultBox;
                 Get.resultBox().style.width = settings.width;
 
                 appBox.appendChild(result);
