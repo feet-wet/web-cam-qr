@@ -36,14 +36,13 @@ var QRWebScanner = (function (QRE) {
             imageFileType: ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp']
         },
 
-    init = function(container, callback){
-        if(!container) return;
-        //if(!data && typeof(data) !== "object") data = false; ToDo: realize receiving of size data
+    init = function(data, callback){
+        if(!data.container) return 'Incorrect data or something is wrong';
 
-        //settings.width = data.width || settings.width;
-        //settings.height = data.height || settings.height;
+        settings.width = data.width || settings.width;
+        settings.height = data.height || settings.height;
 
-        Create.appBox(container);
+        Create.appBox(data.container);
         Create.btnsBox();
         Create.videoBox();
         Create.canvasBox();
@@ -333,7 +332,7 @@ var QRWebScanner = (function (QRE) {
                     WebCam.state = true;
 
                 }, function () {
-                    console.log('with the video stream that something is wrong or the user banned :P');
+                    console.log('With the video stream that something is wrong or the user banned :P');
                 });
         },
 

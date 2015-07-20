@@ -78,7 +78,10 @@
     <div id="qr-web-scan"></div>
     <script>
         window.onload = function () {
-            QRWebScanner.init('#qr-web-scan', function(data){
+            QRWebScanner.init({
+                container: '#qr-web-scan'
+
+            }, function(data){
                 console.log(data);
             });
         };
