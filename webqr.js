@@ -29,6 +29,8 @@ var QRWebScanner = (function (QRE) {
                 canvasBox: 'qrCanvas',
                 resultBox: 'qrResult'
             },
+            btnCamBG: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAARuAAAEbgHQo7JoAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAALFQTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGBgAGBgAGBQAFBAAEBAAEAwADAwADAwADAwADAwADAwADAwAFAwAFAgAFAgAFAgAEAgAEBAIEAwIDAwIDAwIDAwIDAwIDAwIFAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAgEEAgEEBAEEAwEDAwEFAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEAwEEneEDTwAAADp0Uk5TAAEFDQ4RFhgaHCotLjhBRUpMTk9UXWFkbG96foGUl5iZnKGrrK6vsbK0vMLP0NXb4uTl5ufv+fr7/i/djPQAAAD+SURBVBgZvcHVcsIAFEXRTXGX4NKixYJL4fz/hzXDXEKAgUfWgg9KTha+SZJnSwUseZLSnRSPWrrT4kH5oDuHMibUWOmlVSNEQ0Gb8XijoAYr+Y7NOJ548yjfCvncNCbtyrNxfiWhq10UTyyGJ7qTNMSRhK6KQG0trWtAUdLfcCMJmRHQ0UUHGMkgU4e8TB7qMshk4UfmG7IyyIRhLjOHsAwyGejL9CEjg0wVKjIVqMog04XQTBezEHRlkDlmINKTpxeBzFEGXblfQKJUSgBfrq6QbxDFRAfyoZttgYvCVjecFLCfttvTvQJOLPTWAuesN84O5Abu4gV3kOMD/gGpEoZr1YvY2wAAAABJRU5ErkJggg==',
+            btnImgBG: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAABZwAAAWcBcp21pQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAF1SURBVFiF7ZexSsRAEIa/iSkiVxwWonIq14hgoY0+gIhvYOcraGNndwdWtpYWgq8g2giCduILeCCneCAoaKuFMhZJIKy3Zo25rIULfzG7s/t/yewuiagqPlvg1f0vAAjQApqe/O8E8LoJvJcgNOJN4L0Cz700MEswrKpvg3QXkQh4TePSSyAigYg0XPNLBRCRNeAW6InIqYiMuszTjCJVpYiSh+ka6233yYuyOWW+gRFgyuibz5tUGoCqPgNHRveB01wcSgCEDmWoAxvAIbBiyYkMz3wAoAHcALNF90hhAGAIuEjGO0C9aoAdI+cECCoBAFaBDyNHgd0cky1g6VcAwATw2Mc81bqlXPvJ+AuwUAiA+HiefWOuxPf5YmbhGnBs5DwBc0UAWjnmqXrAODAGXFlyHoAZZwBg2VJ3my75egWbugeaLgDTCbGr+U/UBSbzAM4HZJ6qQ/z9aQWoQtfZ+P+j1DtACLTx+WOSnE1vzXsJvAN8AkFqiiajd3okAAAAAElFTkSuQmCC',
             imgProgressBarSRC:'data:image/gif;base64,R0lGODlhXgAPAKEDAJqamsXFxebm5v///yH/C05FVFNDQVBFMi4wAwEAAAAh/hVDcmVhdGVkIHdpdGggVGhlIEdJTVAAIfkEBQoAAwAsAAAAAF4ADwAAAoGcj6nL7Q+jnLTai7PeTfgPHuAoiORnnqWheul5APJMK+063C+5j33IasVoRJswqPqhkDAmz+kzAKbUqjEJBeaOW2y3+X0OqmTAFazLLsNRtjY9LlPPYride/fK54k8Gg/oBbc3RdfmVxf4p0do+KaYKAjZRmjGcYmZqbnJ2enpWQAAIfkEBQoAAwAsRAADABcACQAAAh+Ej6PB7QiBGq6GmJZt+MzNdZIGiiMFXuKXmmy5klsBACH5BAUKAAMALDcAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwqAAMAJAAJAAACNISPo8HtOoScFFkAnQ6QenEly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsHQADACQACQAAAjSEj6PB7TqEnBRZAJ0OkHpxJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0hI+jwe06hJwUWQCdDpB6cSXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwDAAMAJAAJAAACLYSPo8LtOpwUqAI438rMps1hHOUZYghmpZlOp7q+biutF61Foy1LvcPDNX6NAgAh+QQFCgADACwDAAMAFwAJAAACH4yPo8DtCIMaroKYlm34zM11kgaKIwVe4peabLmSWwEAIfkEBQoAAwAsAwADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAUKAAMALBAAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgAh+QQFCgADACwdAAMAJAAJAAACNJSPo8HtOoCcFFkBnQ6QenAly9Z03xQeGcmYJ5hiI+uesTywrfJK90rj9X4zUu1DzOmOngIAIfkEBQoAAwAsKgADACQACQAAAjSUj6PB7TqAnBRZAZ0OkHpwJcvWdN8UHhnJmCeYYiPrnrE8sK3ySvdK4/V+M1LtQ8zpjp4CACH5BAEKAAMALDcAAwAkAAkAAAI0lI+jwe06gJwUWQGdDpB6cCXL1nTfFB4ZyZgnmGIj656xPLCt8kr3SuP1fjNS7UPM6Y6eAgA7',
             imageFileType: ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp']
         },
@@ -208,6 +210,7 @@ var QRWebScanner = (function (QRE) {
                 Set.btnCam(btnCam);
                 Get.btnCam().className = settings.elClass.btnCam;
                 Get.btnCam().title = 'Scan from WebCam';
+                Get.btnCam().style.backgroundImage = "url(" + settings.btnCamBG + ")";
                 Get.btnCam().onclick = function() {
 
                     Get.videoBox().show();
@@ -237,7 +240,8 @@ var QRWebScanner = (function (QRE) {
             Create.element('div', function(btnImg){
                 Set.btnImg(btnImg);
                 Get.btnImg().className = settings.elClass.btnImg;
-                Get.btnCam().title = 'Scan from uploading image';
+                Get.btnImg().title = 'Scan from uploading image';
+                Get.btnImg().style.backgroundImage = "url(" + settings.btnImgBG + ")";
                 Get.btnImg().onclick = function() {
                     Decode.stop();
                     Get.videoBox().hide();
