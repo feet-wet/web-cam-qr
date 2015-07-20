@@ -7,6 +7,7 @@ var QRWebScanner = (function (QRE) {
         videoBox = false,
         resultBox = false,
         resultData = false,
+        callbackData = false,
         btnsBox = false,
         btnCam = false,
         btnImg = false,
@@ -52,7 +53,11 @@ var QRWebScanner = (function (QRE) {
         WebCam.init();
         Loader.start();
 
-        //if(callback && typeof(callback) === "function") callback(resultData); ToDo: realize callback
+        if(callback && typeof(callback) === "function") {
+            callbackData = function() {
+                callback(resultData);
+            }
+        }
     },
 
     Set = {
@@ -443,6 +448,7 @@ var QRWebScanner = (function (QRE) {
 
             if (typeof data == 'string') Get.resultBox().innerHTML = Result.checkForLink(data);
 
+            callbackData();
             Result.clear();
         },
 
