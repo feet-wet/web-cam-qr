@@ -1,43 +1,63 @@
 'use strict';
 
 var QRWebScannerEngine = (function () { //ToDo: Optimization of
+    var _aa = {
+
+        _ab: function(f, e) {
+            var d = qrcode.width,
+                b = qrcode.height,
+                c = true;
+            for (var g = 0; g < e.length && c; g += 2) {
+                var a = Math.floor(e[g]),
+                    h = Math.floor(e[g + 1]);
+                if (a < -1 || a > d || h < -1 || h > b) {
+                    throw "Error._ab "
+                }
+                c = false;
+                if (a == -1) {
+                    e[g] = 0;
                     c = true
+                } else {
+                    if (a == d) {
+                        e[g] = d - 1;
+                        c = true
+                    }
+                }
+                if (h == -1) {
+                    e[g + 1] = 0;
+                    c = true
+                } else {
+                    if (h == b) {
+                        e[g + 1] = b - 1;
+                        c = true
+                    }
                 }
             }
-            if (h == -1) {
-                e[g + 1] = 0;
-                c = true
-            } else {
-                if (h == b) {
-                    e[g + 1] = b - 1;
-                    c = true
+            c = true;
+            for (var k = e.length - 2; k >= 0 && c; k -= 2) {
+                var m = Math.floor(e[k]),
+                    p = Math.floor(e[k + 1]);
+                if (m < -1 || m > d || p < -1 || p > b) {
+                    throw "Error._ab "
                 }
-            }
-        }
-        c = true;
-        for (var g = e.length - 2; g >= 0 && c; g -= 2) {
-            var a = Math.floor(e[g]);
-            var h = Math.floor(e[g + 1]);
-            if (a < -1 || a > d || h < -1 || h > b) {
-                throw "Error._ab "
-            }
-            c = false;
-            if (a == -1) {
-                e[g] = 0;
-                c = true
-            } else {
-                if (a == d) {
-                    e[g] = d - 1;
+                c = false;
+                if (m == -1) {
+                    e[k] = 0;
                     c = true
+                } else {
+                    if (m == d) {
+                        e[k] = d - 1;
+                        c = true
+                    }
                 }
-            }
-            if (h == -1) {
-                e[g + 1] = 0;
-                c = true
-            } else {
-                if (h == b) {
-                    e[g + 1] = b - 1;
+                if (p == -1) {
+                    e[k + 1] = 0;
                     c = true
+                } else {
+                    if (p == b) {
+                        e[k + 1] = b - 1;
+                        c = true
+                    }
                 }
             }
         }
