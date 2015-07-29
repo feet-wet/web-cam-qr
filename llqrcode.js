@@ -1,22 +1,6 @@
-var QRWebScannerEngine = (function(){ //ToDo: Optimization of
-    _aa = {};
-    _aa._ab = function(f, e) {
-        var d = qrcode.width;
-        var b = qrcode.height;
-        var c = true;
-        for (var g = 0; g < e.length && c; g += 2) {
-            var a = Math.floor(e[g]);
-            var h = Math.floor(e[g + 1]);
-            if (a < -1 || a > d || h < -1 || h > b) {
-                throw "Error._ab "
-            }
-            c = false;
-            if (a == -1) {
-                e[g] = 0;
-                c = true
-            } else {
-                if (a == d) {
-                    e[g] = d - 1;
+'use strict';
+
+var QRWebScannerEngine = (function () { //ToDo: Optimization of
                     c = true
                 }
             }
@@ -275,18 +259,18 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
         return k.times(g)
     };
     _ae._bf = function(f, h, d, g, b, e, a, c) {
-        dy2 = c - e;
-        dy3 = h - g + e - c;
+        var dy2 = c - e,
+            dy3 = h - g + e - c;
         if (dy2 == 0 && dy3 == 0) {
             return new _ae(d - f, b - d, f, g - h, e - g, h, 0, 0, 1)
         } else {
-            dx1 = d - b;
-            dx2 = a - b;
-            dx3 = f - d + b - a;
-            dy1 = g - e;
-            _dr = dx1 * dy2 - dx2 * dy1;
-            a13 = (dx3 * dy2 - dx2 * dy3) / _dr;
-            a23 = (dx1 * dy3 - dx3 * dy1) / _dr;
+            var dx1 = d - b,
+                dx2 = a - b,
+                dx3 = f - d + b - a,
+                dy1 = g - e,
+                _dr = dx1 * dy2 - dx2 * dy1,
+                a13 = (dx3 * dy2 - dx2 * dy3) / _dr,
+                a23 = (dx1 * dy3 - dx3 * dy1) / _dr;
             return new _ae(d - f + a13 * d, a - f + a23 * a, f, g - h + a13 * g, c - h + a23 * c, h, a13, a23, 1)
         }
     };
@@ -391,8 +375,8 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
             return (this._bj(d, c) + this._bj(d, b)) / 2
         };
         this.distance = function(c, b) {
-            xDiff = c.X - b.X;
-            yDiff = c.Y - b.Y;
+            var xDiff = c.X - b.X,
+                yDiff = c.Y - b.Y;
             return Math.sqrt((xDiff * xDiff + yDiff * yDiff))
         };
         this._bx = function(g, f, d, e) {
@@ -808,7 +792,7 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
             return s
         }
     }
-    _dx = {};
+    var _dx = {};
     _dx._gl = function(a) {
         if (a < 0 || a > 7) {
             throw "bad arguments"
@@ -950,11 +934,9 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
             var _fq = false;
             var noError = true;
             for (var i = 0; i < _fv; i++) {
-                var eval = poly.evaluateAt(this._fa.exp(_fq ? i + 1 : i));
-                _dh[_dh.length - 1 - i] = eval;
-                if (eval != 0) {
-                    noError = false
-                }
+                var eval_ = poly.evaluateAt(this._fa.exp(_fq ? i + 1 : i));
+                _dh[_dh.length - 1 - i] = eval_;
+                if (eval_ != 0) noError = false;
             }
             if (noError) {
                 return
@@ -1284,7 +1266,7 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
     _az._bd = function(d, c) {
         return d ^ c
     };
-    Decoder = {};
+    var Decoder = {};
     Decoder.rsDecoder = new _db(_az._bb);
     Decoder.correctErrors = function(g, b) {
         var d = g.length;
@@ -1326,7 +1308,7 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
         var l = new QRCodeDataBlockReader(e, o._fd, c.Bits);
         return l
     };
-    qrcode = {};
+    var qrcode = {};
     qrcode.imagedata = null;
     qrcode.width = 0;
     qrcode.height = 0;
@@ -1466,8 +1448,8 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
         if (qrcode.height < b) {
             throw "point error"
         }
-        point = (a * 4) + (b * qrcode.width * 4);
-        p = (qrcode.imagedata.data[point] * 33 + qrcode.imagedata.data[point + 1] * 34 + qrcode.imagedata.data[point + 2] * 33) / 100;
+        var point = (a * 4) + (b * qrcode.width * 4),
+            p = (qrcode.imagedata.data[point] * 33 + qrcode.imagedata.data[point + 1] * 34 + qrcode.imagedata.data[point + 2] * 33) / 100;
         return p
     };
     qrcode.binarize = function(d) {
@@ -1553,7 +1535,7 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
             return (a >> b) + (2 << ~b)
         }
     }
-    removeFromArray = function(array, c, b) {
+    var removeFromArray = function(array, c, b) {
         var a = array.slice((b || c) + 1 || array.length);
         array.length = c < 0 ? array.length + c : c;
         return array.push.apply(array, a)
@@ -1564,8 +1546,8 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
     var _eg = 2;
     qrcode._er = function(c) {
         function b(l, k) {
-            xDiff = l.X - k.X;
-            yDiff = l.Y - k.Y;
+            var xDiff = l.X - k.X,
+                yDiff = l.Y - k.Y;
             return Math.sqrt((xDiff * xDiff + yDiff * yDiff))
         }
 
@@ -2358,7 +2340,7 @@ var QRWebScannerEngine = (function(){ //ToDo: Optimization of
                 if (k != e && k != f && k != d && k != n) {
                     throw "Invalid mode: " + k + " in (block:" + this._ed + " bit:" + this._cw + ")"
                 }
-                dataLength = this.getDataLength(k);
+                var dataLength = this.getDataLength(k);
                 if (dataLength < 1) {
                     throw "Invalid data length: " + dataLength
                 }
