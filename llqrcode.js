@@ -75,20 +75,39 @@ var QRWebScannerEngine = (function () { //ToDo: Optimization of
             a._ad(k);
             _aa._ab(b, k);
             try {
+        _af: function(b, d, a) {
+            var l = new _ac(d),
+                k = new Array(d << 1);
+            for (var g = 0; g < d; g++) {
+                var h = k.length,
+                    j = g + 0.5;
                 for (var i = 0; i < h; i += 2) {
-                    var e = (Math.floor(k[i]) * 4) + (Math.floor(k[i + 1]) * qrcode.width * 4);
-                    var f = b[Math.floor(k[i]) + qrcode.width * Math.floor(k[i + 1])];
-                    qrcode.imagedata.data[e] = f ? 255 : 0;
-                    qrcode.imagedata.data[e + 1] = f ? 255 : 0;
-                    qrcode.imagedata.data[e + 2] = 0;
-                    qrcode.imagedata.data[e + 3] = 255;
-                    if (f) {
-                        l._dq(i >> 1, g)
-                    }
+                    k[i] = (i >> 1) + 0.5;
+                    k[i + 1] = j
                 }
-            } catch (c) {
-                throw "Error._ab"
+                a._ad(k);
+                _aa._ab(b, k);
+                try {
+                    for (var z = 0; z < h; z += 2) {
+                        var e = (Math.floor(k[z]) * 4) + (Math.floor(k[z + 1]) * qrcode.width * 4),
+                            f = b[Math.floor(k[z]) + qrcode.width * Math.floor(k[z + 1])];
+                        qrcode.imagedata.data[e] = f ? 255 : 0;
+                        qrcode.imagedata.data[e + 1] = f ? 255 : 0;
+                        qrcode.imagedata.data[e + 2] = 0;
+                        qrcode.imagedata.data[e + 3] = 255;
+
+                        if (f) l._dq(z >> 1, g);
+                    }
+                } catch (c) {
+                    throw "Error._ab"
+                }
             }
+            return l
+        },
+
+        _ah: function(h, o, l, k, r, q, b, a, f, e, n, m, t, s, d, c, j, i) {
+            var g = _ae._ag(l, k, r, q, b, a, f, e, n, m, t, s, d, c, j, i);
+            return _aa._af(h, o, g)
         }
         return l
     };
