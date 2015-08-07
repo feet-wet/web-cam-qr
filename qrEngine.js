@@ -1,5 +1,47 @@
 var QRWebScannerEngine = (function () {
 
+    /*
+     Ported to JavaScript by Lazar Laszlo 2011
+
+     lazarsoft@gmail.com, www.lazarsoft.info
+
+     */
+
+    /*
+     *
+     * Copyright 2007 ZXing authors
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *      http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
+    //    <script type="text/javascript" src="grid.js"></script>
+    //    <script type="text/javascript" src="version.js"></script>
+    //    <script type="text/javascript" src="detector.js"></script>
+    //    <script type="text/javascript" src="formatinf.js"></script>
+    //    <script type="text/javascript" src="errorlevel.js"></script>
+    //    <script type="text/javascript" src="bitmat.js"></script>
+    //    <script type="text/javascript" src="datablock.js"></script>
+    //    <script type="text/javascript" src="bmparser.js"></script>
+    //    <script type="text/javascript" src="datamask.js"></script>
+    //    <script type="text/javascript" src="rsdecoder.js"></script>
+    //    <script type="text/javascript" src="gf256poly.js"></script>
+    //    <script type="text/javascript" src="gf256.js"></script>
+    //    <script type="text/javascript" src="decoder.js"></script>
+    //    <script type="text/javascript" src="qrcode.js"></script>
+    //    <script type="text/javascript" src="findpat.js"></script>
+    //    <script type="text/javascript" src="alignpat.js"></script>
+    //    <script type="text/javascript" src="databr.js"></script>
+
     var GridSampler = {
 
             checkAndNudgePoints: function( image,  points ) {
@@ -96,132 +138,118 @@ var QRWebScannerEngine = (function () {
             }
 
         },
+    //
 
+    ECB = function (count,  dataCodewords) {
+        this.count = count;
+        this.dataCodewords = dataCodewords;
 
-///
+        this.__defineGetter__("Count", function() {
+            return this.count;
+        });
+        this.__defineGetter__("DataCodewords", function() {
+            return this.dataCodewords;
+        });
+    },
 
-        ECB = function (count,  dataCodewords) {
-            this.count = count;
-            this.dataCodewords = dataCodewords;
+    ECBlocks = function ( ecCodewordsPerBlock,  ecBlocks1,  ecBlocks2) {
+        this.ecCodewordsPerBlock = ecCodewordsPerBlock;
+        this.ecBlocks = (ecBlocks2) ? [ecBlocks1, ecBlocks2] : [ecBlocks1];
 
-            this.__defineGetter__("Count", function()
-            {
-                return this.count;
-            });
-            this.__defineGetter__("DataCodewords", function()
-            {
-                return this.dataCodewords;
-            });
-        },
+        this.__defineGetter__("ECCodewordsPerBlock", function() {
+            return this.ecCodewordsPerBlock;
+        });
 
-        ECBlocks = function ( ecCodewordsPerBlock,  ecBlocks1,  ecBlocks2) {
-            this.ecCodewordsPerBlock = ecCodewordsPerBlock;
-            if(ecBlocks2)
-                this.ecBlocks = [ecBlocks1, ecBlocks2];
-            else
-                this.ecBlocks = [ecBlocks1];
+        this.__defineGetter__("TotalECCodewords", function() {
+            return  this.ecCodewordsPerBlock * this.NumBlocks;
+        });
 
-            this.__defineGetter__("ECCodewordsPerBlock", function()
-            {
-                return this.ecCodewordsPerBlock;
-            });
-
-            this.__defineGetter__("TotalECCodewords", function()
-            {
-                return  this.ecCodewordsPerBlock * this.NumBlocks;
-            });
-
-            this.__defineGetter__("NumBlocks", function()
-            {
-                var total = 0;
-                for (var i = 0; i < this.ecBlocks.length; i++)
-                {
-                    total += this.ecBlocks[i].length;
-                }
-                return total;
-            });
-
-            this.getECBlocks=function()
-            {
-                return this.ecBlocks;
-            }
-        },
-
-        Version = function ( versionNumber,  alignmentPatternCenters,  ecBlocks1,  ecBlocks2,  ecBlocks3,  ecBlocks4) {
-            this.versionNumber = versionNumber;
-            this.alignmentPatternCenters = alignmentPatternCenters;
-            this.ecBlocks = [ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4];
-
+        this.__defineGetter__("NumBlocks", function() {
             var total = 0;
-            var ecCodewords = ecBlocks1.ECCodewordsPerBlock;
-            var ecbArray = ecBlocks1.getECBlocks();
-            for (var i = 0; i < ecbArray.length; i++) {
-                var ecBlock = ecbArray[i];
-                total += ecBlock.Count * (ecBlock.DataCodewords + ecCodewords);
+            for (var i = 0; i < this.ecBlocks.length; i++) {
+                total += this.ecBlocks[i].length;
             }
-            this.totalCodewords = total;
+            return total;
+        });
 
-            this.__defineGetter__("VersionNumber", function() {
-                return  this.versionNumber;
-            });
+        this.getECBlocks=function() {
+            return this.ecBlocks;
+        }
+    },
 
-            this.__defineGetter__("AlignmentPatternCenters", function() {
-                return  this.alignmentPatternCenters;
-            });
-            this.__defineGetter__("TotalCodewords", function() {
-                return  this.totalCodewords;
-            });
-            this.__defineGetter__("DimensionForVersion", function() {
-                return  17 + 4 * this.versionNumber;
-            });
+    Version = function ( versionNumber,  alignmentPatternCenters,  ecBlocks1,  ecBlocks2,  ecBlocks3,  ecBlocks4) {
+        this.versionNumber = versionNumber;
+        this.alignmentPatternCenters = alignmentPatternCenters;
+        this.ecBlocks = [ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4];
 
-            this.buildFunctionPattern=function() {
-                var dimension = this.DimensionForVersion;
-                var bitMatrix = new BitMatrix(dimension);
+        var total = 0,
+            ecCodewords = ecBlocks1.ECCodewordsPerBlock,
+            ecbArray = ecBlocks1.getECBlocks();
 
-                // Top left finder pattern + separator + format
-                bitMatrix.setRegion(0, 0, 9, 9);
-                // Top right finder pattern + separator + format
-                bitMatrix.setRegion(dimension - 8, 0, 8, 9);
-                // Bottom left finder pattern + separator + format
-                bitMatrix.setRegion(0, dimension - 8, 9, 8);
+        for (var i = 0; i < ecbArray.length; i++) {
+            var ecBlock = ecbArray[i];
+            total += ecBlock.Count * (ecBlock.DataCodewords + ecCodewords);
+        }
+        this.totalCodewords = total;
 
-                // Alignment patterns
-                var max = this.alignmentPatternCenters.length;
-                for (var x = 0; x < max; x++) {
-                    var i = this.alignmentPatternCenters[x] - 2;
-                    for (var y = 0; y < max; y++)
-                    {
-                        if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0))
-                        {
-                            // No alignment patterns near the three finder paterns
-                            continue;
-                        }
-                        bitMatrix.setRegion(this.alignmentPatternCenters[y] - 2, i, 5, 5);
+        this.__defineGetter__("VersionNumber", function() {
+            return  this.versionNumber;
+        });
+
+        this.__defineGetter__("AlignmentPatternCenters", function() {
+            return  this.alignmentPatternCenters;
+        });
+        this.__defineGetter__("TotalCodewords", function() {
+            return  this.totalCodewords;
+        });
+        this.__defineGetter__("DimensionForVersion", function() {
+            return  17 + 4 * this.versionNumber;
+        });
+
+        this.buildFunctionPattern=function() {
+            var dimension = this.DimensionForVersion,
+                bitMatrix = new BitMatrix(dimension);
+
+            // Top left finder pattern + separator + format
+            bitMatrix.setRegion(0, 0, 9, 9);
+            // Top right finder pattern + separator + format
+            bitMatrix.setRegion(dimension - 8, 0, 8, 9);
+            // Bottom left finder pattern + separator + format
+            bitMatrix.setRegion(0, dimension - 8, 9, 8);
+
+            // Alignment patterns
+            var max = this.alignmentPatternCenters.length;
+            for (var x = 0; x < max; x++) {
+                var i = this.alignmentPatternCenters[x] - 2;
+                for (var y = 0; y < max; y++) {
+                    if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0)) {
+                        // No alignment patterns near the three finder paterns
+                        continue;
                     }
+                    bitMatrix.setRegion(this.alignmentPatternCenters[y] - 2, i, 5, 5);
                 }
-
-                // Vertical timing pattern
-                bitMatrix.setRegion(6, 9, 1, dimension - 17);
-                // Horizontal timing pattern
-                bitMatrix.setRegion(9, 6, dimension - 17, 1);
-
-                if (this.versionNumber > 6)
-                {
-                    // Version info, top right
-                    bitMatrix.setRegion(dimension - 11, 0, 3, 6);
-                    // Version info, bottom left
-                    bitMatrix.setRegion(0, dimension - 11, 6, 3);
-                }
-
-                return bitMatrix;
-            };
-
-            this.getECBlocksForLevel=function( ecLevel)
-            {
-                return this.ecBlocks[ecLevel.ordinal()];
             }
+
+            // Vertical timing pattern
+            bitMatrix.setRegion(6, 9, 1, dimension - 17);
+            // Horizontal timing pattern
+            bitMatrix.setRegion(9, 6, dimension - 17, 1);
+
+            if (this.versionNumber > 6) {
+                // Version info, top right
+                bitMatrix.setRegion(dimension - 11, 0, 3, 6);
+                // Version info, bottom left
+                bitMatrix.setRegion(0, dimension - 11, 6, 3);
+            }
+
+            return bitMatrix;
         };
+
+        this.getECBlocksForLevel=function( ecLevel)
+        {
+            return this.ecBlocks[ecLevel.ordinal()];
+        }
+    };
 
     Version.VERSION_DECODE_INFO = [0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6, 0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78, 0x1145D, 0x12A17, 0x13532, 0x149A6, 0x15683, 0x168C9, 0x177EC, 0x18EC4, 0x191E1, 0x1AFAB, 0x1B08E, 0x1CC1A, 0x1D33F, 0x1ED75, 0x1F250, 0x209D5, 0x216F0, 0x228BA, 0x2379F, 0x24B0B, 0x2542E, 0x26A64, 0x27541, 0x28C69];
 
@@ -247,8 +275,8 @@ var QRWebScannerEngine = (function () {
     };
 
     Version.decodeVersionInformation=function( versionBits) {
-        var bestDifference = 0xffffffff;
-        var bestVersion = 0;
+        var bestDifference = 0xffffffff,
+            bestVersion = 0;
         for (var i = 0; i < Version.VERSION_DECODE_INFO.length; i++) {
             var targetVersion = Version.VERSION_DECODE_INFO[i];
             // Do the version info bits match exactly? done.
@@ -315,7 +343,7 @@ var QRWebScannerEngine = (function () {
             new Version(40, [6, 30, 58, 86, 114, 142, 170], new ECBlocks(30, new ECB(19, 118), new ECB(6, 119)), new ECBlocks(28, new ECB(18, 47), new ECB(31, 48)), new ECBlocks(30, new ECB(34, 24), new ECB(34, 25)), new ECBlocks(30, new ECB(20, 15), new ECB(61, 16)))];
     }
 
-///
+    //
 
     var PerspectiveTransform = function ( a11,  a21,  a31,  a12,  a22,  a32,  a13,  a23,  a33) {
         this.a11 = a11;
@@ -2004,7 +2032,7 @@ var QRWebScannerEngine = (function () {
     }
 
 
-    Array.prototype.remove = function(from, to) {
+    Array.prototype.remove = function(from, to) { //ToDo: Warning
         var rest = this.slice((to || from) + 1 || this.length);
         this.length = from < 0 ? this.length + from : from;
         return this.push.apply(this, rest);
@@ -2079,6 +2107,7 @@ var QRWebScannerEngine = (function () {
         patterns[2] = pointC;
     };
 
+    //
 
     function FinderPattern(posX, posY,  estimatedModuleSize)
     {
