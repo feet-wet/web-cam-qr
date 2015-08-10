@@ -1262,62 +1262,60 @@ var QRWebScannerEngine = (function () {
 
     //
 
-    function ReedSolomonDecoder(field) {
+    var ReedSolomonDecoder = function (field) {
         this.field = field;
-        this.decode=function(received,  twoS) {
-            var poly = new GF256Poly(this.field, received);
-            var syndromeCoefficients = new Array(twoS);
-            for(var i=0;i<syndromeCoefficients.length;i++)syndromeCoefficients[i]=0;
-            var dataMatrix = false;//this.field.Equals(GF256.DATA_MATRIX_FIELD);
-            var noError = true;
+        this.decode = function (received,  twoS) {
+            var poly = new GF256Poly(this.field, received),
+                syndromeCoefficients = new Array(twoS);
+
+            for (var k=0; k < syndromeCoefficients.length; k++) syndromeCoefficients[k] = 0;
+            var dataMatrix = false, //this.field.Equals(GF256.DATA_MATRIX_FIELD)
+                noError = true;
+
             for (var i = 0; i < twoS; i++) {
                 // Thanks to sanfordsquires for this fix:
                 var eval_ = poly.evaluateAt(this.field.exp(dataMatrix?i + 1:i));
                 syndromeCoefficients[syndromeCoefficients.length - 1 - i] = eval_;
-                if (eval_ != 0) {
-                    noError = false;
-                }
+
+                if (eval_ != 0) noError = false;
             }
-            if (noError) {
-                return ;
-            }
-            var syndrome = new GF256Poly(this.field, syndromeCoefficients);
-            var sigmaOmega = this.runEuclideanAlgorithm(this.field.buildMonomial(twoS, 1), syndrome, twoS);
-            var sigma = sigmaOmega[0];
-            var omega = sigmaOmega[1];
-            var errorLocations = this.findErrorLocations(sigma);
-            var errorMagnitudes = this.findErrorMagnitudes(omega, errorLocations, dataMatrix);
-            for (var i = 0; i < errorLocations.length; i++) {
-                var position = received.length - 1 - this.field.log(errorLocations[i]);
-                if (position < 0)
-                {
-                    throw "ReedSolomonException Bad error location";
-                }
-                received[position] = GF256.addOrSubtract(received[position], errorMagnitudes[i]);
+            if (noError) return ;
+
+            var syndrome = new GF256Poly(this.field, syndromeCoefficients),
+                sigmaOmega = this.runEuclideanAlgorithm(this.field.buildMonomial(twoS, 1), syndrome, twoS),
+                sigma = sigmaOmega[0],
+                omega = sigmaOmega[1],
+                errorLocations = this.findErrorLocations(sigma),
+                errorMagnitudes = this.findErrorMagnitudes(omega, errorLocations, dataMatrix);
+
+            for (var j = 0; j < errorLocations.length; j++) {
+                var position = received.length - 1 - this.field.log(errorLocations[j]);
+
+                if (position < 0) throw "ReedSolomonException Bad error location";
+                received[position] = GF256.addOrSubtract(received[position], errorMagnitudes[j]);
             }
         };
 
         this.runEuclideanAlgorithm=function( a,  b,  R) {
             // Assume a's degree is >= b's
-            if (a.Degree < b.Degree)
-            {
+            if (a.Degree < b.Degree) {
                 var temp = a;
                 a = b;
                 b = temp;
             }
 
-            var rLast = a;
-            var r = b;
-            var sLast = this.field.One;
-            var s = this.field.Zero;
-            var tLast = this.field.Zero;
-            var t = this.field.One;
+            var rLast = a,
+                r = b,
+                sLast = this.field.One,
+                s = this.field.Zero,
+                tLast = this.field.Zero,
+                t = this.field.One;
 
             // Run Euclidean algorithm until r's degree is less than R/2
             while (r.Degree >= Math.floor(R / 2)) {
-                var rLastLast = rLast;
-                var sLastLast = sLast;
-                var tLastLast = tLast;
+                var rLastLast = rLast,
+                    sLastLast = sLast,
+                    tLastLast = tLast;
                 rLast = r;
                 sLast = s;
                 tLast = t;
@@ -1328,12 +1326,13 @@ var QRWebScannerEngine = (function () {
                     throw "r_{i-1} was zero";
                 }
                 r = rLastLast;
-                var q = this.field.Zero;
-                var denominatorLeadingTerm = rLast.getCoefficient(rLast.Degree);
-                var dltInverse = this.field.inverse(denominatorLeadingTerm);
+                var q = this.field.Zero,
+                    denominatorLeadingTerm = rLast.getCoefficient(rLast.Degree),
+                    dltInverse = this.field.inverse(denominatorLeadingTerm);
+
                 while (r.Degree >= rLast.Degree && !r.Zero) {
-                    var degreeDiff = r.Degree - rLast.Degree;
-                    var scale = this.field.multiply(r.getCoefficient(r.Degree), dltInverse);
+                    var degreeDiff = r.Degree - rLast.Degree,
+                        scale = this.field.multiply(r.getCoefficient(r.Degree), dltInverse);
                     q = q.addOrSubtract(this.field.buildMonomial(degreeDiff, scale));
                     r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
                     //r.EXE();
@@ -1341,61 +1340,53 @@ var QRWebScannerEngine = (function () {
 
                 s = q.multiply1(sLast).addOrSubtract(sLastLast);
                 t = q.multiply1(tLast).addOrSubtract(tLastLast);
-            }
+            };
 
             var sigmaTildeAtZero = t.getCoefficient(0);
-            if (sigmaTildeAtZero == 0) {
-                throw "ReedSolomonException sigmaTilde(0) was zero";
-            }
+            if (sigmaTildeAtZero == 0) throw "ReedSolomonException sigmaTilde(0) was zero";
 
-            var inverse = this.field.inverse(sigmaTildeAtZero);
-            var sigma = t.multiply2(inverse);
-            var omega = r.multiply2(inverse);
+            var inverse = this.field.inverse(sigmaTildeAtZero),
+                sigma = t.multiply2(inverse),
+                omega = r.multiply2(inverse);
             return [sigma, omega];
         };
-        this.findErrorLocations=function( errorLocator) {
+        this.findErrorLocations = function( errorLocator) {
             // This is a direct application of Chien's search
             var numErrors = errorLocator.Degree;
             if (numErrors == 1) {
                 // shortcut
-                return new Array(errorLocator.getCoefficient(1));
+                return [errorLocator.getCoefficient(1)];
             }
-            var result = new Array(numErrors);
-            var e = 0;
+            var result = [numErrors],
+                e = 0;
             for (var i = 1; i < 256 && e < numErrors; i++) {
-                if (errorLocator.evaluateAt(i) == 0)
-                {
+                if (errorLocator.evaluateAt(i) == 0) {
                     result[e] = this.field.inverse(i);
                     e++;
                 }
             }
-            if (e != numErrors) {
-                throw "Error locator degree does not match number of roots";
-            }
+            if (e != numErrors) throw "Error locator degree does not match number of roots";
+
             return result;
         };
-        this.findErrorMagnitudes=function( errorEvaluator,  errorLocations,  dataMatrix) {
+        this.findErrorMagnitudes = function( errorEvaluator,  errorLocations,  dataMatrix) {
             // This is directly applying Forney's Formula
-            var s = errorLocations.length;
-            var result = new Array(s);
+            var s = errorLocations.length,
+                result = [s];
             for (var i = 0; i < s; i++) {
-                var xiInverse = this.field.inverse(errorLocations[i]);
-                var denominator = 1;
-                for (var j = 0; j < s; j++)
-                {
-                    if (i != j) {
-                        denominator = this.field.multiply(denominator, GF256.addOrSubtract(1, this.field.multiply(errorLocations[j], xiInverse)));
-                    }
+                var xiInverse = this.field.inverse(errorLocations[i]),
+                    denominator = 1;
+                for (var j = 0; j < s; j++) {
+                    if (i != j) denominator = this.field.multiply(denominator, GF256.addOrSubtract(1, this.field.multiply(errorLocations[j], xiInverse)));
                 }
                 result[i] = this.field.multiply(errorEvaluator.evaluateAt(xiInverse), this.field.inverse(denominator));
                 // Thanks to sanfordsquires for this fix:
-                if (dataMatrix) {
-                    result[i] = this.field.multiply(result[i], xiInverse);
-                }
+                if (dataMatrix) result[i] = this.field.multiply(result[i], xiInverse);
             }
+
             return result;
         }
-    }
+    };
 
     //
 
@@ -1813,7 +1804,6 @@ var QRWebScannerEngine = (function () {
             var escaped = "";
             try {
                 escaped = escape( s ); //ToDo: Replace
-                console.log(escaped);
             }
             catch(e) {
                 console.log(e);
