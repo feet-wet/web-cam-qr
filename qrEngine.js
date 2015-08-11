@@ -974,7 +974,7 @@ var QRWebScannerEngine = (function () {
 
     //
 
-    function BitMatrixParser(bitMatrix) {
+    var BitMatrixParser = function (bitMatrix) {
         var dimension = bitMatrix.Dimension;
         if (dimension < 21 || (dimension & 0x03) != 1) {
             throw "Error BitMatrixParser";
@@ -983,15 +983,12 @@ var QRWebScannerEngine = (function () {
         this.parsedVersion = null;
         this.parsedFormatInfo = null;
 
-        this.copyBit=function( i,  j,  versionBits) {
+        this.copyBit = function( i,  j,  versionBits) {
             return this.bitMatrix.get_Renamed(i, j)?(versionBits << 1) | 0x1:versionBits << 1;
         };
 
-        this.readFormatInformation=function() {
-            if (this.parsedFormatInfo != null)
-            {
-                return this.parsedFormatInfo;
-            }
+        this.readFormatInformation = function() {
+            if (this.parsedFormatInfo != null) return this.parsedFormatInfo;
 
             // Read top-left format info bits
             var formatInfoBits = 0;
@@ -1008,46 +1005,41 @@ var QRWebScannerEngine = (function () {
             }
 
             this.parsedFormatInfo = FormatInformation.decodeFormatInformation(formatInfoBits);
-            if (this.parsedFormatInfo != null) {
-                return this.parsedFormatInfo;
-            }
+            if (this.parsedFormatInfo != null) return this.parsedFormatInfo;
 
             // Hmm, failed. Try the top-right/bottom-left pattern
-            var dimension = this.bitMatrix.Dimension;
+            var dimension = this.bitMatrix.Dimension,
+                iMin = dimension - 8;
             formatInfoBits = 0;
-            var iMin = dimension - 8;
-            for (var i = dimension - 1; i >= iMin; i--) {
-                formatInfoBits = this.copyBit(i, 8, formatInfoBits);
+
+            for (var k = dimension - 1; k >= iMin; k--) {
+                formatInfoBits = this.copyBit(k, 8, formatInfoBits);
             }
-            for (var j = dimension - 7; j < dimension; j++) {
-                formatInfoBits = this.copyBit(8, j, formatInfoBits);
+            for (var m = dimension - 7; m < dimension; m++) {
+                formatInfoBits = this.copyBit(8, m, formatInfoBits);
             }
 
             this.parsedFormatInfo = FormatInformation.decodeFormatInformation(formatInfoBits);
-            if (this.parsedFormatInfo != null) {
-                return this.parsedFormatInfo;
-            }
+
+            if (this.parsedFormatInfo != null) return this.parsedFormatInfo;
             throw "Error readFormatInformation";
         };
+
         this.readVersion=function() {
 
-            if (this.parsedVersion != null) {
-                return this.parsedVersion;
-            }
+            if (this.parsedVersion != null) return this.parsedVersion;
 
-            var dimension = this.bitMatrix.Dimension;
+            var dimension = this.bitMatrix.Dimension,
+                provisionalVersion = (dimension - 17) >> 2;
 
-            var provisionalVersion = (dimension - 17) >> 2;
-            if (provisionalVersion <= 6) {
-                return Version.getVersionForNumber(provisionalVersion);
-            }
+            if (provisionalVersion <= 6) return Version.getVersionForNumber(provisionalVersion);
 
             // Read top-right version info: 3 wide by 6 tall
-            var versionBits = 0;
-            var ijMin = dimension - 11;
-            for (var j = 5; j >= 0; j--) {
-                for (var i = dimension - 9; i >= ijMin; i--) {
-                    versionBits = this.copyBit(i, j, versionBits);
+            var versionBits = 0,
+                ijMin = dimension - 11;
+            for (var n = 5; n >= 0; n--) {
+                for (var l = dimension - 9; l >= ijMin; l--) {
+                    versionBits = this.copyBit(l, n, versionBits);
                 }
             }
 
@@ -1072,22 +1064,22 @@ var QRWebScannerEngine = (function () {
         };
         this.readCodewords=function() {
 
-            var formatInfo = this.readFormatInformation();
-            var version = this.readVersion();
+            var formatInfo = this.readFormatInformation(),
+                version = this.readVersion(),
 
             // Get the data mask for the format used in this QR Code. This will exclude
             // some bits from reading as we wind through the bit matrix.
-            var dataMask = DataMask.forReference( formatInfo.DataMask);
-            var dimension = this.bitMatrix.Dimension;
+                dataMask = DataMask.forReference( formatInfo.DataMask),
+                dimension = this.bitMatrix.Dimension;
             dataMask.unmaskBitMatrix(this.bitMatrix, dimension);
 
             var functionPattern = version.buildFunctionPattern();
 
-            var readingUp = true;
-            var result = new Array(version.TotalCodewords);
-            var resultOffset = 0;
-            var currentByte = 0;
-            var bitsRead = 0;
+            var readingUp = true,
+                result = new Array(version.TotalCodewords),
+                resultOffset = 0,
+                currentByte = 0,
+                bitsRead = 0;
             // Read columns in pairs, from right to left
             for (var j = dimension - 1; j > 0; j -= 2) {
                 if (j == 6) {
@@ -1123,7 +1115,7 @@ var QRWebScannerEngine = (function () {
             }
             return result;
         }
-    }
+    };
 
     //
 
