@@ -362,31 +362,30 @@ var QRWebScannerEngine = (function () {
         this.a32 = a32;
         this.a33 = a33;
         this.transformPoints1=function( points) {
-            var max = points.length;
-            var a11 = this.a11;
-            var a12 = this.a12;
-            var a13 = this.a13;
-            var a21 = this.a21;
-            var a22 = this.a22;
-            var a23 = this.a23;
-            var a31 = this.a31;
-            var a32 = this.a32;
-            var a33 = this.a33;
+            var max = points.length,
+                a11 = this.a11,
+                a12 = this.a12,
+                a13 = this.a13,
+                a21 = this.a21,
+                a22 = this.a22,
+                a23 = this.a23,
+                a31 = this.a31,
+                a32 = this.a32,
+                a33 = this.a33;
             for (var i = 0; i < max; i += 2) {
-                var x = points[i];
-                var y = points[i + 1];
-                var denominator = a13 * x + a23 * y + a33;
+                var x = points[i],
+                    y = points[i + 1],
+                    denominator = a13 * x + a23 * y + a33;
                 points[i] = (a11 * x + a21 * y + a31) / denominator;
                 points[i + 1] = (a12 * x + a22 * y + a32) / denominator;
             }
         };
         this. transformPoints2=function(xValues, yValues) {
             var n = xValues.length;
-            for (var i = 0; i < n; i++)
-            {
-                var x = xValues[i];
-                var y = yValues[i];
-                var denominator = this.a13 * x + this.a23 * y + this.a33;
+            for (var i = 0; i < n; i++) {
+                var x = xValues[i],
+                    y = yValues[i],
+                    denominator = this.a13 * x + this.a23 * y + this.a33;
                 xValues[i] = (this.a11 * x + this.a21 * y + this.a31) / denominator;
                 yValues[i] = (this.a12 * x + this.a22 * y + this.a32) / denominator;
             }
@@ -404,8 +403,9 @@ var QRWebScannerEngine = (function () {
 
     PerspectiveTransform.quadrilateralToQuadrilateral = function( x0,  y0,  x1,  y1,  x2,  y2,  x3,  y3,  x0p,  y0p,  x1p,  y1p,  x2p,  y2p,  x3p,  y3p) {
 
-        var qToS = this.quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3);
-        var sToQ = this.squareToQuadrilateral(x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p);
+        var qToS = this.quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3),
+            sToQ = this.squareToQuadrilateral(x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p);
+
         return sToQ.times(qToS);
     };
 
