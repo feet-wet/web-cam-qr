@@ -48,7 +48,7 @@ var QRWebScannerEngine = (function () {
         CENTER_QUORUM = 2,
 
 
-    GridSampler = {
+        GridSampler = {
 
             checkAndNudgePoints: function( image,  points ) {
                 var width = qrcode.width,
@@ -146,116 +146,116 @@ var QRWebScannerEngine = (function () {
         },
     //
 
-    ECB = function (count,  dataCodewords) {
-        this.count = count;
-        this.dataCodewords = dataCodewords;
+        ECB = function (count,  dataCodewords) {
+            this.count = count;
+            this.dataCodewords = dataCodewords;
 
-        this.__defineGetter__("Count", function() {
-            return this.count;
-        });
-        this.__defineGetter__("DataCodewords", function() {
-            return this.dataCodewords;
-        });
-    },
+            this.__defineGetter__("Count", function() {
+                return this.count;
+            });
+            this.__defineGetter__("DataCodewords", function() {
+                return this.dataCodewords;
+            });
+        },
 
-    ECBlocks = function ( ecCodewordsPerBlock,  ecBlocks1,  ecBlocks2) {
-        this.ecCodewordsPerBlock = ecCodewordsPerBlock;
-        this.ecBlocks = (ecBlocks2) ? [ecBlocks1, ecBlocks2] : [ecBlocks1];
+        ECBlocks = function ( ecCodewordsPerBlock,  ecBlocks1,  ecBlocks2) {
+            this.ecCodewordsPerBlock = ecCodewordsPerBlock;
+            this.ecBlocks = (ecBlocks2) ? [ecBlocks1, ecBlocks2] : [ecBlocks1];
 
-        this.__defineGetter__("ECCodewordsPerBlock", function() {
-            return this.ecCodewordsPerBlock;
-        });
+            this.__defineGetter__("ECCodewordsPerBlock", function() {
+                return this.ecCodewordsPerBlock;
+            });
 
-        this.__defineGetter__("TotalECCodewords", function() {
-            return  this.ecCodewordsPerBlock * this.NumBlocks;
-        });
+            this.__defineGetter__("TotalECCodewords", function() {
+                return  this.ecCodewordsPerBlock * this.NumBlocks;
+            });
 
-        this.__defineGetter__("NumBlocks", function() {
-            var total = 0;
-            for (var i = 0; i < this.ecBlocks.length; i++) {
-                total += this.ecBlocks[i].length;
-            }
-            return total;
-        });
-
-        this.getECBlocks=function() {
-            return this.ecBlocks;
-        }
-    },
-
-    Version = function ( versionNumber,  alignmentPatternCenters,  ecBlocks1,  ecBlocks2,  ecBlocks3,  ecBlocks4) {
-        this.versionNumber = versionNumber;
-        this.alignmentPatternCenters = alignmentPatternCenters;
-        this.ecBlocks = [ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4];
-
-        var total = 0,
-            ecCodewords = ecBlocks1.ECCodewordsPerBlock,
-            ecbArray = ecBlocks1.getECBlocks();
-
-        for (var i = 0; i < ecbArray.length; i++) {
-            var ecBlock = ecbArray[i];
-            total += ecBlock.Count * (ecBlock.DataCodewords + ecCodewords);
-        }
-        this.totalCodewords = total;
-
-        this.__defineGetter__("VersionNumber", function() {
-            return  this.versionNumber;
-        });
-
-        this.__defineGetter__("AlignmentPatternCenters", function() {
-            return  this.alignmentPatternCenters;
-        });
-        this.__defineGetter__("TotalCodewords", function() {
-            return  this.totalCodewords;
-        });
-        this.__defineGetter__("DimensionForVersion", function() {
-            return  17 + 4 * this.versionNumber;
-        });
-
-        this.buildFunctionPattern=function() {
-            var dimension = this.DimensionForVersion,
-                bitMatrix = new BitMatrix(dimension);
-
-            // Top left finder pattern + separator + format
-            bitMatrix.setRegion(0, 0, 9, 9);
-            // Top right finder pattern + separator + format
-            bitMatrix.setRegion(dimension - 8, 0, 8, 9);
-            // Bottom left finder pattern + separator + format
-            bitMatrix.setRegion(0, dimension - 8, 9, 8);
-
-            // Alignment patterns
-            var max = this.alignmentPatternCenters.length;
-            for (var x = 0; x < max; x++) {
-                var i = this.alignmentPatternCenters[x] - 2;
-                for (var y = 0; y < max; y++) {
-                    if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0)) {
-                        // No alignment patterns near the three finder paterns
-                        continue;
-                    }
-                    bitMatrix.setRegion(this.alignmentPatternCenters[y] - 2, i, 5, 5);
+            this.__defineGetter__("NumBlocks", function() {
+                var total = 0;
+                for (var i = 0; i < this.ecBlocks.length; i++) {
+                    total += this.ecBlocks[i].length;
                 }
+                return total;
+            });
+
+            this.getECBlocks=function() {
+                return this.ecBlocks;
             }
+        },
 
-            // Vertical timing pattern
-            bitMatrix.setRegion(6, 9, 1, dimension - 17);
-            // Horizontal timing pattern
-            bitMatrix.setRegion(9, 6, dimension - 17, 1);
+        Version = function ( versionNumber,  alignmentPatternCenters,  ecBlocks1,  ecBlocks2,  ecBlocks3,  ecBlocks4) {
+            this.versionNumber = versionNumber;
+            this.alignmentPatternCenters = alignmentPatternCenters;
+            this.ecBlocks = [ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4];
 
-            if (this.versionNumber > 6) {
-                // Version info, top right
-                bitMatrix.setRegion(dimension - 11, 0, 3, 6);
-                // Version info, bottom left
-                bitMatrix.setRegion(0, dimension - 11, 6, 3);
+            var total = 0,
+                ecCodewords = ecBlocks1.ECCodewordsPerBlock,
+                ecbArray = ecBlocks1.getECBlocks();
+
+            for (var i = 0; i < ecbArray.length; i++) {
+                var ecBlock = ecbArray[i];
+                total += ecBlock.Count * (ecBlock.DataCodewords + ecCodewords);
             }
+            this.totalCodewords = total;
 
-            return bitMatrix;
+            this.__defineGetter__("VersionNumber", function() {
+                return  this.versionNumber;
+            });
+
+            this.__defineGetter__("AlignmentPatternCenters", function() {
+                return  this.alignmentPatternCenters;
+            });
+            this.__defineGetter__("TotalCodewords", function() {
+                return  this.totalCodewords;
+            });
+            this.__defineGetter__("DimensionForVersion", function() {
+                return  17 + 4 * this.versionNumber;
+            });
+
+            this.buildFunctionPattern=function() {
+                var dimension = this.DimensionForVersion,
+                    bitMatrix = new BitMatrix(dimension);
+
+                // Top left finder pattern + separator + format
+                bitMatrix.setRegion(0, 0, 9, 9);
+                // Top right finder pattern + separator + format
+                bitMatrix.setRegion(dimension - 8, 0, 8, 9);
+                // Bottom left finder pattern + separator + format
+                bitMatrix.setRegion(0, dimension - 8, 9, 8);
+
+                // Alignment patterns
+                var max = this.alignmentPatternCenters.length;
+                for (var x = 0; x < max; x++) {
+                    var i = this.alignmentPatternCenters[x] - 2;
+                    for (var y = 0; y < max; y++) {
+                        if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0)) {
+                            // No alignment patterns near the three finder paterns
+                            continue;
+                        }
+                        bitMatrix.setRegion(this.alignmentPatternCenters[y] - 2, i, 5, 5);
+                    }
+                }
+
+                // Vertical timing pattern
+                bitMatrix.setRegion(6, 9, 1, dimension - 17);
+                // Horizontal timing pattern
+                bitMatrix.setRegion(9, 6, dimension - 17, 1);
+
+                if (this.versionNumber > 6) {
+                    // Version info, top right
+                    bitMatrix.setRegion(dimension - 11, 0, 3, 6);
+                    // Version info, bottom left
+                    bitMatrix.setRegion(0, dimension - 11, 6, 3);
+                }
+
+                return bitMatrix;
+            };
+
+            this.getECBlocksForLevel=function( ecLevel)
+            {
+                return this.ecBlocks[ecLevel.ordinal()];
+            }
         };
-
-        this.getECBlocksForLevel=function( ecLevel)
-        {
-            return this.ecBlocks[ecLevel.ordinal()];
-        }
-    };
 
     Version.VERSION_DECODE_INFO = [0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6, 0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78, 0x1145D, 0x12A17, 0x13532, 0x149A6, 0x15683, 0x168C9, 0x177EC, 0x18EC4, 0x191E1, 0x1AFAB, 0x1B08E, 0x1CC1A, 0x1D33F, 0x1ED75, 0x1F250, 0x209D5, 0x216F0, 0x228BA, 0x2379F, 0x24B0B, 0x2542E, 0x26A64, 0x27541, 0x28C69];
 
@@ -779,7 +779,7 @@ var QRWebScannerEngine = (function () {
 
     //
 
-    function ErrorCorrectionLevel(ordinal,  bits, name) {
+    var ErrorCorrectionLevel = function (ordinal,  bits, name) {
         this.ordinal_Renamed_Field = ordinal;
         this.bits = bits;
         this.name = name;
@@ -792,7 +792,7 @@ var QRWebScannerEngine = (function () {
         this.ordinal=function() {
             return this.ordinal_Renamed_Field;
         }
-    };
+    }
 
     ErrorCorrectionLevel.forBits=function( bits) {
         if (bits < 0 || bits >= FOR_BITS.length) {
@@ -801,10 +801,17 @@ var QRWebScannerEngine = (function () {
         return FOR_BITS[bits];
     };
 
+    var L = new ErrorCorrectionLevel(0, 0x01, "L");
+    var M = new ErrorCorrectionLevel(1, 0x00, "M");
+    var Q = new ErrorCorrectionLevel(2, 0x03, "Q");
+    var H = new ErrorCorrectionLevel(3, 0x02, "H");
+    var FOR_BITS = [M, L, H, Q];
+
+
     //
 
 
-    var BitMatrix = function ( width,  height) {
+    function BitMatrix( width,  height) {
         if(!height) height=width;
 
         if (width < 1 || height < 1) {
@@ -813,8 +820,9 @@ var QRWebScannerEngine = (function () {
         this.width = width;
         this.height = height;
         var rowSize = width >> 5;
-        if ((width & 0x1f) != 0) rowSize++;
-
+        if ((width & 0x1f) != 0) {
+            rowSize++;
+        }
         this.rowSize = rowSize;
         this.bits = new Array(rowSize * height);
         for(var i=0;i<this.bits.length;i++)
@@ -847,26 +855,36 @@ var QRWebScannerEngine = (function () {
         };
         this.clear=function() {
             var max = this.bits.length;
-            for (var i = 0; i < max; i++) {
+            for (var i = 0; i < max; i++)
+            {
                 this.bits[i] = 0;
             }
         };
         this.setRegion=function( left,  top,  width,  height) {
-            if (top < 0 || left < 0) throw "Left and top must be nonnegative";
-            if (height < 1 || width < 1) throw "Height and width must be at least 1";
-
-            var right = left + width,
-                bottom = top + height;
-            if (bottom > this.height || right > this.width) throw "The region must fit inside the matrix";
-
-            for (var y = top; y < bottom; y++) {
+            if (top < 0 || left < 0)
+            {
+                throw "Left and top must be nonnegative";
+            }
+            if (height < 1 || width < 1)
+            {
+                throw "Height and width must be at least 1";
+            }
+            var right = left + width;
+            var bottom = top + height;
+            if (bottom > this.height || right > this.width)
+            {
+                throw "The region must fit inside the matrix";
+            }
+            for (var y = top; y < bottom; y++)
+            {
                 var offset = y * this.rowSize;
-                for (var x = left; x < right; x++) {
+                for (var x = left; x < right; x++)
+                {
                     this.bits[offset + (x >> 5)] |= 1 << (x & 0x1f);
                 }
             }
         }
-    };
+    }
 
     //
 
@@ -1095,135 +1113,135 @@ var QRWebScannerEngine = (function () {
 
     var DataMask = {
 
-        forReference: function(reference) {
-            if (reference < 0 || reference > 7) throw "System.ArgumentException";
+            forReference: function(reference) {
+                if (reference < 0 || reference > 7) throw "System.ArgumentException";
 
-            return DataMask.DATA_MASKS[reference];
-        }
+                return DataMask.DATA_MASKS[reference];
+            }
 
-    },
+        },
 
-    DataMask000 = function () {
-        this.unmaskBitMatrix = function(bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask000 = function () {
+            this.unmaskBitMatrix = function(bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked = function( i,  j) {
+                return ((i + j) & 0x01) == 0;
             }
-        };
-        this.isMasked = function( i,  j) {
-            return ((i + j) & 0x01) == 0;
-        }
-    },
+        },
 
-    DataMask001 = function () {
-        this.unmaskBitMatrix = function(bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask001 = function () {
+            this.unmaskBitMatrix = function(bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked = function( i,  j) {
+                return (i & 0x01) == 0;
             }
-        };
-        this.isMasked = function( i,  j) {
-            return (i & 0x01) == 0;
-        }
-    },
+        },
 
-    DataMask010 = function () {
-        this.unmaskBitMatrix = function(bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask010 = function () {
+            this.unmaskBitMatrix = function(bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked = function( i,  j) {
+                return j % 3 == 0;
             }
-        };
-        this.isMasked = function( i,  j) {
-            return j % 3 == 0;
-        }
-    },
+        },
 
-    DataMask011 = function () {
-        this.unmaskBitMatrix = function(bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask011 = function () {
+            this.unmaskBitMatrix = function(bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked = function( i,  j) {
+                return (i + j) % 3 == 0;
             }
-        };
-        this.isMasked = function( i,  j) {
-            return (i + j) % 3 == 0;
-        }
-    },
+        },
 
-    DataMask100 = function () {
-        this.unmaskBitMatrix = function (bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask100 = function () {
+            this.unmaskBitMatrix = function (bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked = function( i,  j) {
+                return (((URShift(i, 1)) + (j / 3)) & 0x01) == 0;
             }
-        };
-        this.isMasked = function( i,  j) {
-            return (((URShift(i, 1)) + (j / 3)) & 0x01) == 0;
-        }
-    },
+        },
 
-    DataMask101 = function () {
-        this.unmaskBitMatrix = function(bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask101 = function () {
+            this.unmaskBitMatrix = function(bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked = function( i,  j) {
+                var temp = i * j;
+                return (temp & 0x01) + (temp % 3) == 0;
             }
-        };
-        this.isMasked = function( i,  j) {
-            var temp = i * j;
-            return (temp & 0x01) + (temp % 3) == 0;
-        }
-    },
+        },
 
-    DataMask110 = function () {
-        this.unmaskBitMatrix = function(bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask110 = function () {
+            this.unmaskBitMatrix = function(bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked = function( i,  j) {
+                var temp = i * j;
+                return (((temp & 0x01) + (temp % 3)) & 0x01) == 0;
             }
-        };
-        this.isMasked = function( i,  j) {
-            var temp = i * j;
-            return (((temp & 0x01) + (temp % 3)) & 0x01) == 0;
-        }
-    },
+        },
 
-    DataMask111 = function () {
-        this.unmaskBitMatrix=function(bits,  dimension) {
-            for (var i = 0; i < dimension; i++) {
-                for (var j = 0; j < dimension; j++) {
-                    if (this.isMasked(i, j)) {
-                        bits.flip(j, i);
+        DataMask111 = function () {
+            this.unmaskBitMatrix=function(bits,  dimension) {
+                for (var i = 0; i < dimension; i++) {
+                    for (var j = 0; j < dimension; j++) {
+                        if (this.isMasked(i, j)) {
+                            bits.flip(j, i);
+                        }
                     }
                 }
+            };
+            this.isMasked=function( i,  j) {
+                return ((((i + j) & 0x01) + ((i * j) % 3)) & 0x01) == 0;
             }
         };
-        this.isMasked=function( i,  j) {
-            return ((((i + j) & 0x01) + ((i * j) % 3)) & 0x01) == 0;
-        }
-    };
 
     DataMask.DATA_MASKS = [new DataMask000(), new DataMask001(), new DataMask010(), new DataMask011(), new DataMask100(), new DataMask101(), new DataMask110(), new DataMask111()];
 
@@ -1648,42 +1666,42 @@ var QRWebScannerEngine = (function () {
             // We don't care about errors in the error-correction codewords
             for (var k = 0; k < numDataCodewords; k++) {
                 codewordBytes[k] = codewordsInts[k];
-        }
-
-    },
-
-    decode: function (bits) {
-        var parser = new BitMatrixParser(bits),
-            version = parser.readVersion(),
-            ecLevel = parser.readFormatInformation().ErrorCorrectionLevel,
-        // Read codewords
-            codewords = parser.readCodewords(),
-        // Separate into data blocks
-            dataBlocks = DataBlock.getDataBlocks(codewords, version, ecLevel),
-        // Count total number of data bytes
-            totalBytes = 0;
-        for (var i = 0; i < dataBlocks.length; i++) {
-            totalBytes += dataBlocks[i].NumDataCodewords;
-        }
-        var resultBytes = new Array(totalBytes),
-            resultOffset = 0;
-
-        // Error-correct and copy data blocks together into a stream of bytes
-        for (var j = 0; j < dataBlocks.length; j++) {
-            var dataBlock = dataBlocks[j],
-                codewordBytes = dataBlock.Codewords,
-                numDataCodewords = dataBlock.NumDataCodewords;
-            Decoder.correctErrors(codewordBytes, numDataCodewords);
-            for (var k = 0; k < numDataCodewords; k++) {
-                resultBytes[resultOffset++] = codewordBytes[k];
             }
-        }
 
-        // Decode the contents of that stream of bytes
-        return new QRCodeDataBlockReader(resultBytes, version.VersionNumber, ecLevel.Bits);
-        //return DecodedBitStreamParser.decode(resultBytes, version, ecLevel);
-    }
-};
+        },
+
+        decode: function (bits) {
+            var parser = new BitMatrixParser(bits),
+                version = parser.readVersion(),
+                ecLevel = parser.readFormatInformation().ErrorCorrectionLevel,
+            // Read codewords
+                codewords = parser.readCodewords(),
+            // Separate into data blocks
+                dataBlocks = DataBlock.getDataBlocks(codewords, version, ecLevel),
+            // Count total number of data bytes
+                totalBytes = 0;
+            for (var i = 0; i < dataBlocks.length; i++) {
+                totalBytes += dataBlocks[i].NumDataCodewords;
+            }
+            var resultBytes = new Array(totalBytes),
+                resultOffset = 0;
+
+            // Error-correct and copy data blocks together into a stream of bytes
+            for (var j = 0; j < dataBlocks.length; j++) {
+                var dataBlock = dataBlocks[j],
+                    codewordBytes = dataBlock.Codewords,
+                    numDataCodewords = dataBlock.NumDataCodewords;
+                Decoder.correctErrors(codewordBytes, numDataCodewords);
+                for (var k = 0; k < numDataCodewords; k++) {
+                    resultBytes[resultOffset++] = codewordBytes[k];
+                }
+            }
+
+            // Decode the contents of that stream of bytes
+            return new QRCodeDataBlockReader(resultBytes, version.VersionNumber, ecLevel.Bits);
+            //return DecodedBitStreamParser.decode(resultBytes, version, ecLevel);
+        }
+    };
 
 
     //
