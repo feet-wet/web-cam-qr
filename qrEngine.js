@@ -1979,9 +1979,6 @@ var QRWebScannerEngine = (function () {
         }
     };
 
-
-
-
     function URShift( number,  bits) {
         if (number >= 0)
             return number >> bits;
@@ -1989,11 +1986,17 @@ var QRWebScannerEngine = (function () {
             return (number >> bits) + (2 << ~bits);
     }
 
+    // Old resolve with global method for Array, replaced by removeArrayArea
+    //Array.prototype.remove = function(from, to) {
+    //    var rest = this.slice((to || from) + 1 || this.length);
+    //    this.length = from < 0 ? this.length + from : from;
+    //    return this.push.apply(this, rest);
+    //};
 
-    Array.prototype.remove = function(from, to) { //ToDo: Warning
-        var rest = this.slice((to || from) + 1 || this.length);
-        this.length = from < 0 ? this.length + from : from;
-        return this.push.apply(this, rest);
+    var removeArrayArea = function(array, from, to) { //ToDo: Warning
+        var rest = array.slice((to || from) + 1 || array.length);
+        array.length = from < 0 ? array.length + from : from;
+        return array.push.apply(array, rest);
     };
 
     //
@@ -2260,8 +2263,10 @@ var QRWebScannerEngine = (function () {
                 for (i = 0; i < this.possibleCenters.length && this.possibleCenters.length > 3; i++) {
                     var pattern =  this.possibleCenters[i];
                     //if (Math.abs(pattern.EstimatedModuleSize - average) > 0.2 * average)
+                    console.log(pattern);
                     if (Math.abs(pattern.EstimatedModuleSize - average) > limit) {
-                        this.possibleCenters.remove(i);
+                        //this.possibleCenters.remove(i); Old resolve for global method for array, see 1989
+                        removeArrayArea(this.possibleCenters, i);
                         i--;
                     }
                 }
