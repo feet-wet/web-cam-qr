@@ -1,10 +1,15 @@
 var QRWebScannerEngine = (function () {
 
     /*
-     Ported to JavaScript by Lazar Laszlo 2011
+     * Added to function closures and refactoring by Sergey Illarionov 2015
+     * easthunch@gmail, www.maplemap.net
+     *
+     */
 
-     lazarsoft@gmail.com, www.lazarsoft.info
-
+    /*
+     * Ported to JavaScript by Lazar Laszlo 2011
+     * lazarsoft@gmail.com, www.lazarsoft.info
+     *
      */
 
     /*
@@ -23,24 +28,6 @@ var QRWebScannerEngine = (function () {
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    //    <script type="text/javascript" src="grid.js"></script>
-    //    <script type="text/javascript" src="version.js"></script>
-    //    <script type="text/javascript" src="detector.js"></script>
-    //    <script type="text/javascript" src="formatinf.js"></script>
-    //    <script type="text/javascript" src="errorlevel.js"></script>
-    //    <script type="text/javascript" src="bitmat.js"></script>
-    //    <script type="text/javascript" src="datablock.js"></script>
-    //    <script type="text/javascript" src="bmparser.js"></script>
-    //    <script type="text/javascript" src="datamask.js"></script>
-    //    <script type="text/javascript" src="rsdecoder.js"></script>
-    //    <script type="text/javascript" src="gf256poly.js"></script>
-    //    <script type="text/javascript" src="gf256.js"></script>
-    //    <script type="text/javascript" src="decoder.js"></script>
-    //    <script type="text/javascript" src="qrcode.js"></script>
-    //    <script type="text/javascript" src="findpat.js"></script>
-    //    <script type="text/javascript" src="alignpat.js"></script>
-    //    <script type="text/javascript" src="databr.js"></script>
 
     var MIN_SKIP = 3,
         MAX_MODULES = 57,
@@ -784,7 +771,7 @@ var QRWebScannerEngine = (function () {
 
 
     var BitMatrix = function ( width,  height) {
-        if(!height) height=width;
+        if(!height) height = width;
 
         if (width < 1 || height < 1) throw "Both dimensions must be greater than 0";
         this.width = width;
@@ -1289,7 +1276,7 @@ var QRWebScannerEngine = (function () {
 
                 s = q.multiply1(sLast).addOrSubtract(sLastLast);
                 t = q.multiply1(tLast).addOrSubtract(tLastLast);
-            };
+            }
 
             var sigmaTildeAtZero = t.getCoefficient(0);
             if (sigmaTildeAtZero == 0) throw "ReedSolomonException sigmaTilde(0) was zero";
