@@ -5,18 +5,19 @@
     <title>Web QR Scanner</title>
     <link href="./qrWebScanner/qr-web-scanner.css" rel="stylesheet" />
 </head>
-
 <body>
     <div id="qr-web-scan"></div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            QRWebScanner.init({
-                container: '#qr-web-scan'
 
-            }, function(data){
-                console.log(data);
-            });
+<script type="text/javascript" src="./qrWebScanner/qr-web-scanner.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        QRWebScanner.init({
+            container: '#qr-web-scan'
+
+        }, function(data){
+            console.log(data);
         });
-    </script>
+    });
+</script>
 </body>
 </html>
