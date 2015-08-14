@@ -1,6 +1,7 @@
 "use strict";
 
 var QRWebScanner = (function (QRE) {
+var QRWebScanner = (function () {
 
     var appBox = false,
         canvasBox = false,
@@ -373,7 +374,7 @@ var QRWebScanner = (function (QRE) {
         state: true,
 
         start: function(object) {
-            QRE.qrcode.currentStatus = undefined;
+            QRWebScannerEngine.qrcode.currentStatus = undefined;
             Canvas.captureImage(object);
         },
 
@@ -385,16 +386,16 @@ var QRWebScanner = (function (QRE) {
         },
 
         image: function(data64Image, objectSource) {
-            QRE.qrcode.decode(data64Image);
+            QRWebScannerEngine.qrcode.decode(data64Image);
             Decode.check(objectSource)
         },
 
         check: function(objectSource) {
             if(!Decode.state) return;
 
-            if (QRE.qrcode.currentStatus && QRE.qrcode.result) {
-                resultData = QRE.qrcode.result;
-                Result.insert(QRE.qrcode.result);
+            if (QRWebScannerEngine.qrcode.currentStatus && QRWebScannerEngine.qrcode.result) {
+                resultData = QRWebScannerEngine.qrcode.result;
+                Result.insert(QRWebScannerEngine.qrcode.result);
             } else {
                 Canvas.captureImage(objectSource);
             }
@@ -464,7 +465,7 @@ var QRWebScanner = (function (QRE) {
 
         clear: function() {
             setTimeout(function(){
-                QRE.qrcode.result = '';
+                QRWebScannerEngine.qrcode.result = '';
             }, 500);
         }
     };
@@ -473,7 +474,6 @@ var QRWebScanner = (function (QRE) {
         init: init
     }
 
-}(QRWebScannerEngine));
 
 /*
  Ported to JavaScript by Lazar Laszlo 2011
