@@ -1,6 +1,10 @@
 "use strict";
 
-var QRWebScanner = (function (QRE) {
+/**
+ * @author of QRWebScanner - Sergey Illarionov <easthunch@gmail.com>
+ * @author of QRWebScannerEngine - Lazar Laszlo <lazarsoft@gmail.com>
+ */
+
 var QRWebScanner = (function () {
 
     var appBox = false,
@@ -474,16 +478,20 @@ var QRWebScanner = (function () {
         init: init
     }
 
+}());
 
-/*
- Ported to JavaScript by Lazar Laszlo 2011
 
- lazarsoft@gmail.com, www.lazarsoft.info
-
+/**
+ * Added to function closures and refactoring by Sergey Illarionov 2015
+ * easthunch@gmail, www.maplemap.net
  */
 
-/*
- *
+/**
+ * Ported to JavaScript by Lazar Laszlo 2011
+ * lazarsoft@gmail.com, www.lazarsoft.info
+ */
+
+/**
  * Copyright 2007 ZXing authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
