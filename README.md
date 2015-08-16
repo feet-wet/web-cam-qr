@@ -2,6 +2,7 @@
 QR WebCamScanner aplication - modified and optimized version
 
 ## Usage
+
 - Add to page
 ```html
 <link href="./qrWebScanner/qr-web-scanner.css" rel="stylesheet" />
@@ -11,6 +12,7 @@ or attach minified file
 ```html
 <script src="./qrWebScanner/qr-web-scanner.min.js"></script>
 ```
+
 - initialization
 ```javascript
     QRWebScanner.init({
@@ -20,8 +22,7 @@ or attach minified file
         data = 'your result'
     });
 ```
-...
-```
+
 - See and try [example] (http://maplemap.github.io/app.web-cam-qr/)
 
 
