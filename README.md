@@ -1,5 +1,5 @@
 # app.web-cam-qr
-QR WebCamScanner aplication - modified and optimized version
+QR WebCamScanner application - modified and optimized version. [origin](https://github.com/LazarSoft/jsqrcode) by Lazar Laszlo
 
 ## Usage
 
@@ -10,6 +10,7 @@ QR WebCamScanner aplication - modified and optimized version
 ```
 or attach minified file
 ```html
+<link href="./qrWebScanner/qr-web-scanner.css" rel="stylesheet" />
 <script src="./qrWebScanner/qr-web-scanner.min.js"></script>
 ```
 
@@ -24,6 +25,3 @@ or attach minified file
 ```
 
 - See and try [example] (http://maplemap.github.io/app.web-cam-qr/)
-
-
--- [origin](https://github.com/LazarSoft/jsqrcode) by Lazar Laszlo
