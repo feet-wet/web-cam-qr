@@ -1,5 +1,5 @@
 # app.web-cam-qr
-QR WebCamScanner application - modified and optimized version. [origin](https://github.com/LazarSoft/jsqrcode) by Lazar Laszlo
+QR WebCamScanner application - modified and optimized version. [Origin](https://github.com/LazarSoft/jsqrcode) by Lazar Laszlo
 
 ## Usage
 
