@@ -1,6 +1,7 @@
 # app.web-cam-qr
 QR WebCam Scanner javascript application - modified and optimized version. [Origin](https://github.com/LazarSoft/jsqrcode) by Lazar Laszlo
 - without Flash or jQuery
+- See and try [example] (https://maplemap.github.io/app.web-cam-qr/)
 
 
 ## Usage
@@ -25,5 +26,3 @@ or attach minified file
         data = 'your result'
     });
 ```
-
-- See and try [example] (http://maplemap.github.io/app.web-cam-qr/)
